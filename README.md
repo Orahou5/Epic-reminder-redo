@@ -1,2 +1,2 @@
 # Epic-reminder-redo
-A redo of a private repo
+A external helper for the game bot Epic RPG available on Discord
