@@ -1,26 +1,26 @@
 export class Pending {
     //TODO: change object name
-    static array = {};
+    static pending = {};
 
     static addPending(channel, user, commandId) {
-        if(this.array[channel.id] === undefined) {
-            this.array[channel.id] = [];
+        if(this.pending[channel.id] === undefined) {
+            this.pending[channel.id] = [];
         }
-        this.array.push([user, commandId]);
+        this.pending.push([user, commandId]);
     }
 
     static removePending(channel, user, commandId) {
-        if(this.array[channel.id] === undefined) {
+        if(this.pending[channel.id] === undefined) {
             return;
         }
-        this.array = this.array.filter((pending) => {
+        this.pending = this.pending.filter((pending) => {
             return pending[0].id !== user.id && pending[1] !== commandId;
         })
     }
 
     static filterPending(msg) {
         const array = Preverification.scan(msg);
-        return this.array[msg.channel.id].filter((pending) => {
+        return this.pending[msg.channel.id].filter((pending) => {
             return array.includes(pending[1]);
         })
     }
@@ -64,13 +64,25 @@ export class Preverification{
     }
 }
 
+function regexResolve(stringReg, location) {
+    const regex = new RegExp(stringReg, "si");
+    return regex.test(location);
+}
 
-//TODO: Wrong, redo from this point
-function resolve(msg, user) {
+export function resolve(msg, user) {
+    const now = Date.now();
     const array = Pending.filterPending(msg);
     array.forEach((pending) => {
         Process.getCommand(pending[1]).forEach((command) => {
-            command(msg, user);
+            if(!regexResolve(command.condition(pending[0].username), command.place(msg))) return;
+
+            const soul = {
+                user, 
+                m: msg
+            }
+
+            command.rule(soul)
+            command.save(soul, now);
         })
     })
 }

@@ -64,7 +64,7 @@ db.serialize(() => {
     });
 });
 
-function getReminders() {
+export function getReminders() {
     return new Promise((resolve, reject) => {
         const now = Date.now();
         const subquery = `(SELECT reduction FROM Cooldowns WHERE Cooldowns.command_id = Reminder.command_id)`;
@@ -85,7 +85,7 @@ function getReminders() {
     });
 }
 
-function disableReminder(discord_id, command_id) {
+export function disableReminder(discord_id, command_id) {
     return new Promise((resolve, reject) => {
         const query = `
             UPDATE Reminder
@@ -102,7 +102,7 @@ function disableReminder(discord_id, command_id) {
     });
 }
 
-function insertOrUpdateCooldown(command_id, reduction) {
+export function insertOrUpdateCooldown(command_id, reduction) {
     return new Promise((resolve, reject) => {
         const query = `
             INSERT OR REPLACE INTO Cooldowns(command_id, reduction)
@@ -117,7 +117,7 @@ function insertOrUpdateCooldown(command_id, reduction) {
     });
 }
 
-function getCooldown(command_id) {
+export function getCooldown(command_id) {
     return new Promise((resolve, reject) => {
         const query = `
             SELECT reduction FROM Cooldowns
@@ -132,7 +132,7 @@ function getCooldown(command_id) {
     });
 }
 
-function insertReminder(reminder) {
+export function insertReminder(reminder) {
     return new Promise((resolve, reject) => {
         const query = `
             INSERT OR REPLACE INTO Reminder(discord_id, command_id, dTime, time, enabled, channel_id, scenario_id, fixed_cd)
@@ -147,7 +147,7 @@ function insertReminder(reminder) {
     });
 }
 
-function insertPlayer(player) {
+export function insertPlayer(player) {
     return new Promise((resolve, reject) => {
         const query = `
             INSERT OR REPLACE INTO Player(discord_id, username, donor, maried_to, time_travel)
@@ -162,7 +162,7 @@ function insertPlayer(player) {
     });
 }
 
-function deletePlayer(discord_id) {
+export function deletePlayer(discord_id) {
     return new Promise((resolve, reject) => {
         const query = `
             DELETE FROM Player WHERE discord_id = ?
@@ -176,7 +176,7 @@ function deletePlayer(discord_id) {
     });
 }
 
-function playerExists(discord_id) {
+export function playerExists(discord_id) {
     return new Promise((resolve, reject) => {
         const query = `
             SELECT EXISTS(SELECT * FROM Player WHERE discord_id = ?) AS exist;
