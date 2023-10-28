@@ -38,6 +38,15 @@ export class Process {
         return this;
     }
 
+    static addCommands(id, commands) {
+        if(this.commands[id] === undefined) {
+            this.commands[id] = [];
+        }
+        this.commands[id].push(...commands);
+
+        return this;
+    }
+
     static getCommand(id) {
         return this.commands[id];
     }
@@ -81,8 +90,8 @@ export function resolve(msg, user) {
                 m: msg
             }
 
-            command.rule(soul)
-            command.save(soul, now);
+            command?.rule(soul, pending[1])
+            command?.save(soul, now);
         })
     })
 }
