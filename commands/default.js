@@ -1,5 +1,3 @@
-import { Pending, Process } from "../process.js";
-
 export const cryCommand = (saveMethod) => ({
     scenario_id: "cry",
     condition: (username) => `${username}.{2} cried`,

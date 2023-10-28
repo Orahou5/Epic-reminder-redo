@@ -3,7 +3,6 @@ import { Process } from "../process.js";
 import { stopStory } from "../rule.js";
 import { cooldownCommand, cryCommand, epicJailCommand} from "./default.js";
 
-
 const toBeRegistered = [
     {
         scenario_id: "winFight",
