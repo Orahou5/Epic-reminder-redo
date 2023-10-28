@@ -1,6 +1,7 @@
 import { insertReminder } from "../database.js";
 import { Process } from "../process.js";
-import { cooldownCommand, cryCommand, epicJailCommand, stopStory } from "./default.js";
+import { stopStory } from "../rule.js";
+import { cooldownCommand, cryCommand, epicJailCommand} from "./default.js";
 
 
 const toBeRegistered = [
