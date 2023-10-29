@@ -34,7 +34,7 @@ db.serialize(() => {
             time integer NOT NULL DEFAULT 0,
             enabled integer NOT NULL DEFAULT 0,
             channel_id text NOT NULL,
-            scenario_id text NOT NULL,
+            message text NOT NULL DEFAULT "No Data",
             fixed_cd integer NOT NULL DEFAULT 0,
             PRIMARY KEY (discord_id, command_id),
             FOREIGN KEY (discord_id) 
@@ -64,19 +64,25 @@ db.serialize(() => {
     });
 });
 
-export function getReminders() {
+export function getReminders(delay = 0) {
     return new Promise((resolve, reject) => {
         const now = Date.now();
         const subquery = `(SELECT reduction FROM Cooldowns WHERE Cooldowns.command_id = Reminder.command_id)`;
         const query = `
-            SELECT * FROM Reminder
+            SELECT  discord_id, 
+                    command_id, 
+                    channel_id, 
+                    message,
+                    CASE fixed_cd
+                        WHEN 1 THEN dTime+time
+                        ELSE dTime-dTime*${subquery}/100+time
+                    END timer
+            FROM Reminder
             WHERE enabled = 1
-            AND CASE 
-                WHEN fixed_cd = 1 THEN dTime+time <= ${now}
-                ELSE dTime-dTime*${subquery}/100+time <= ${now}
-            END
+            AND timer - ? <= ?
+            ORDER BY timer ASC
         `;
-        db.all(query, [], (err, rows) => {
+        db.all(query, [delay, now], (err, rows) => {
             if (err) {
                 reject(err);
             }
@@ -135,10 +141,10 @@ export function getCooldown(command_id) {
 export function insertReminder(reminder) {
     return new Promise((resolve, reject) => {
         const query = `
-            INSERT OR REPLACE INTO Reminder(discord_id, command_id, dTime, time, enabled, channel_id, scenario_id, fixed_cd)
+            INSERT OR REPLACE INTO Reminder(discord_id, command_id, dTime, time, enabled, channel_id, message, fixed_cd)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?)
         `;
-        db.run(query, [reminder.discord_id, reminder.command_id, reminder.dTime, reminder.time, true, reminder.channel_id, reminder.scenario_id, reminder.fixed_cd], (err) => {
+        db.run(query, [reminder.discord_id, reminder.command_id, reminder.dTime, reminder.time, true, reminder.channel_id, reminder.message, reminder.fixed_cd], (err) => {
             if (err) {
                 reject(err);
             }
@@ -190,9 +196,13 @@ export function playerExists(discord_id) {
     });
 }
 
-db.close((err) => {
-    if (err) {
-        console.error(err.message);
-    }
-    console.log('Close the database connection.');
-});
+export function closeDatabase(followUp) {
+    db.close((err) => {
+        if (err) {
+            console.error(err.message);
+        }
+        console.log('Close the database connection.');
+        followUp();
+    });
+}
+

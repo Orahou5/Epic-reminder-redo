@@ -1,24 +1,28 @@
+import { Location } from "./discordUtils.js";
+
 export class Pending {
     //TODO: change object name
     static pending = {};
 
     static addPending(channel, user, commandId) {
+        console.log("addpending")
         if(this.pending[channel.id] === undefined) {
             this.pending[channel.id] = [];
         }
-        this.pending.push([user, commandId]);
+        this.pending[channel.id].push([user, commandId]);
     }
 
     static removePending(channel, user, commandId) {
         if(this.pending[channel.id] === undefined) {
             return;
         }
-        this.pending = this.pending.filter((pending) => {
+        this.pending[channel.id] = this.pending[channel.id].filter((pending) => {
             return pending[0].id !== user.id && pending[1] !== commandId;
         })
     }
 
     static filterPending(msg) {
+        if(this.pending[msg.channel.id] === undefined) return;
         const array = Preverification.scan(msg);
         return this.pending[msg.channel.id].filter((pending) => {
             return array.includes(pending[1]);
@@ -39,6 +43,7 @@ export class Process {
     }
 
     static addCommands(id, commands) {
+        console.log("addcommands")
         if(this.commands[id] === undefined) {
             this.commands[id] = [];
         }
@@ -57,16 +62,26 @@ export class Preverification{
 
     static addCommandLink(keyword, id) {
         this.commandsLink.push({
-            keyword,
+            keyword: keyword[0],
+            locationString: keyword[1],
             id
         });
 
         return this;
     }
 
+    static addCommandLinks(arrayOfKeyword, id) {
+        arrayOfKeyword.forEach((keyword) => {
+            this.addCommandLink(keyword, id);
+        });
+
+        return this;
+    }
+
     static scan(message) {
+        console.log("scan")
         return this.commandsLink.filter((link) => {
-            return message.content.includes(link.keyword);
+            return Location?.[link.locationString]?.(message)?.includes(link.keyword) ?? false;
         }).map((link) => {
             return link.id;
         })
@@ -78,20 +93,21 @@ function regexResolve(stringReg, location) {
     return regex.test(location);
 }
 
-export function resolve(msg, user) {
+export function resolve(msg) {
     const now = Date.now();
     const array = Pending.filterPending(msg);
     array.forEach((pending) => {
-        Process.getCommand(pending[1]).forEach((command) => {
-            if(!regexResolve(command.condition(pending[0].username), command.place(msg))) return;
+        const command = Process.getCommand(pending[1]).find((command) => {
+            console.log("regexResolve : ", regexResolve(command.condition(pending[0]), command.place(msg)));
+            return regexResolve(command.condition(pending[0]), command.place(msg));
+        });
 
-            const soul = {
-                user, 
-                m: msg
-            }
+        const soul = {
+            user: pending[0], 
+            m: msg
+        }
 
-            command?.rule(soul, pending[1])
-            command?.save(soul, now);
-        })
+        command.rule?.(soul, pending[1])
+        command.save?.(soul, now);
     })
 }
