@@ -1,4 +1,4 @@
-import { Pending } from "./process.js";
+import { Pending } from "./Pending.js";
 
 export function stopStory(soul, commandId) {
     console.log("stoppending")

@@ -1,34 +1,5 @@
+import { Pending } from "./Pending.js";
 import { Location } from "./discordUtils.js";
-
-export class Pending {
-    //TODO: change object name
-    static pending = {};
-
-    static addPending(channel, user, commandId) {
-        console.log("addpending")
-        if(this.pending[channel.id] === undefined) {
-            this.pending[channel.id] = [];
-        }
-        this.pending[channel.id].push([user, commandId]);
-    }
-
-    static removePending(channel, user, commandId) {
-        if(this.pending[channel.id] === undefined) {
-            return;
-        }
-        this.pending[channel.id] = this.pending[channel.id].filter((pending) => {
-            return pending[0].id !== user.id && pending[1] !== commandId;
-        })
-    }
-
-    static filterPending(msg) {
-        if(this.pending[msg.channel.id] === undefined) return;
-        const array = Preverification.scan(msg);
-        return this.pending[msg.channel.id].filter((pending) => {
-            return array.includes(pending[1]);
-        })
-    }
-}
 
 export class Process {
     static commands = {};
@@ -80,11 +51,16 @@ export class Preverification{
 
     static scan(message) {
         console.log("scan")
-        return this.commandsLink.filter((link) => {
+        
+        const ids = this.commandsLink.filter((link) => {
             return Location?.[link.locationString]?.(message)?.includes(link.keyword) ?? false;
         }).map((link) => {
             return link.id;
         })
+
+        console.log("scan", ids);
+
+        return [...new Set(ids)]
     }
 }
 
@@ -95,19 +71,23 @@ function regexResolve(stringReg, location) {
 
 export function resolve(msg) {
     const now = Date.now();
+
     const array = Pending.filterPending(msg);
+
+    console.log("resolve", array);
+
     array.forEach((pending) => {
-        const command = Process.getCommand(pending[1]).find((command) => {
-            console.log("regexResolve : ", regexResolve(command.condition(pending[0]), command.place(msg)));
-            return regexResolve(command.condition(pending[0]), command.place(msg));
+        const command = Process.getCommand(pending.commandId).find((command) => {
+            console.log("regexResolve : ", regexResolve(command.condition(pending.user), command.place(msg)));
+            return regexResolve(command.condition(pending.user), command.place(msg));
         });
 
         const soul = {
-            user: pending[0], 
+            user: pending.user, 
             m: msg
         }
 
-        command.rule?.(soul, pending[1])
+        command.rule?.(soul, pending.commandId)
         command.save?.(soul, now);
     })
 }

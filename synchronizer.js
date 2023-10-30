@@ -1,3 +1,4 @@
+import { Pending } from "./Pending.js";
 import { disableReminder, getReminders } from "./database.js";
 import { client } from "./index.js";
 import { showHoursMinutesSeconds } from "./utils.js";
@@ -64,13 +65,12 @@ function loopContent() {
     });
 }
 
+function pendingInterval(){
+    Pending.deleteExpired();
+}
+
 export function startTimeloop() {
     loopContent();
     setInterval(loopContent, 30 * 1000);
-}
-
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
+    setInterval(pendingInterval, 5 * 60 * 1000);
 }

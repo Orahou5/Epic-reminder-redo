@@ -1,12 +1,12 @@
 import "dotenv/config.js";
 import { Client } from "oceanic.js";
+import { Pending } from "./Pending.js";
 import "./commands/hunt.js";
 import "./database.js";
 import { closeDatabase } from "./database.js";
-import { Pending, resolve } from "./process.js";
-import { startTimeloop } from "./synchronizer.js";
-import { dirLogCut } from "./utils.js";
 import { Location } from "./discordUtils.js";
+import { resolve } from "./process.js";
+import { startTimeloop } from "./synchronizer.js";
 
 export const client = new Client({ 
     auth: `Bot ${process.env.DISCORD_TOKEN_ERPG}`,
@@ -25,15 +25,13 @@ client.once("ready", async() => {
 client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
-    console.log(Location.authorName(msg));
-
     if(msg.author.id === erpgId) {
         resolve(msg);
     }
 
     if(msg.content === "rpg hunt h") {
         console.log("pending");
-        Pending.addPending(msg.channel, msg.author, "hunt")
+        Pending.addPending(msg.channel.id, msg.author, "hunt")
     }
 })
 
