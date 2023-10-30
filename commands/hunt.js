@@ -1,3 +1,5 @@
+import { Pending } from "../Pending.js";
+import { CommandHandler } from "../commandHandler.js";
 import { insertReminder } from "../database.js";
 import { Location } from "../discordUtils.js";
 import { Display } from "../display.js";
@@ -5,6 +7,10 @@ import { Preverification, Process } from "../process.js";
 import { stopStory } from "../rule.js";
 import { showHoursMinutesSeconds } from "../utils.js";
 import { cooldownCommand, cryCommand, epicJailCommand} from "./default.js";
+
+CommandHandler.addTrigger("hunt", async(msg) => {
+    Pending.addPending(msg.channel.id, msg.author, "hunt")
+});
 
 const toBeRegistered = [
     {
@@ -91,6 +97,10 @@ function insertHunt(soul, now, scenario_id) {
     }).then(() => {
         console.log("inserted");
     }).catch((err) => { 
-        console.log(err) 
+        console.log(err);
+
+        setTimeout(() => {
+            insertHunt(soul, now, scenario_id);
+        }, 10 * 1000);
     });
 }

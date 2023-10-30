@@ -30,17 +30,23 @@ class Timeloop {
             const scenario = this.scenarios.shift();
 
             if(scenario.timer > Date.now()){
-                console.log("sleeping for", scenario.timer - Date.now())
+
+                
+
+                showHoursMinutesSeconds(`sleeping for ${scenario.timer - Date.now()} command : ${scenario.command_id} id : ${scenario.discord_id}`)
+
                 this.sleep(scenario.timer - Date.now());
                 while((yield) !== "sleep");
-                showHoursMinutesSeconds("scenario sleep")
+
+                showHoursMinutesSeconds(`scenario sleep command : ${scenario.command_id} id : ${scenario.discord_id}`)
+
                 if(this.modified){
                     console.log("modified")
                     this.modified = false;
                     continue;
                 }
             }
-            showHoursMinutesSeconds("scenario send")
+            showHoursMinutesSeconds(`scenario send command : ${scenario.command_id} id : ${scenario.discord_id}`)
             client.rest.channels.createMessage(scenario.channel_id, {
                 content: scenario.message,
             }).then(() => {

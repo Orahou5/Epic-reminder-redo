@@ -26,26 +26,30 @@ export class Pending {
 
     static removePending(user, commandId) {
         console.log("removepending");
-        const channelId = this.symlink[`${user.id}-${commandId}`];
-        delete this.pending[channelId]?.[`${user.id}-${commandId}`];
+
+        const channelId = this.symlink[`${user.id}-${commandId}`]?.channelId;
+
+        if (channelId === undefined) return;
+
+        delete this.pending[channelId][`${user.id}-${commandId}`];
         delete this.symlink[`${user.id}-${commandId}`];
     }
 
     static filterPending(msg) {
         console.log("filterpending");
+
         if (this.pending[msg.channel.id] === undefined) return;
 
         const array = Preverification.scan(msg);
 
-        console.log("filter", array);
-
         return Object.values(this.pending[msg.channel.id]).filter((value) => {
-            return array.includes(value.commandId);
+            return array.includes(value?.commandId);
         });
     }
 
     static deleteExpired() {
         console.log("deleteexpired");
+        
         const now = Date.now();
         Object.entries(this.symlink).forEach(([key, value]) => {
             if (value.disabled_at <= now) {

@@ -1,10 +1,9 @@
 import "dotenv/config.js";
 import { Client } from "oceanic.js";
-import { Pending } from "./Pending.js";
-import "./commands/hunt.js";
+import { CommandHandler } from "./commandHandler.js";
 import "./database.js";
 import { closeDatabase } from "./database.js";
-import { Location } from "./discordUtils.js";
+import "./imported.js";
 import { resolve } from "./process.js";
 import { startTimeloop } from "./synchronizer.js";
 
@@ -29,9 +28,9 @@ client.on("messageCreate", async(msg) => {
         resolve(msg);
     }
 
-    if(msg.content === "rpg hunt h") {
-        console.log("pending");
-        Pending.addPending(msg.channel.id, msg.author, "hunt")
+    if(msg.content.startsWith("rpg")) {
+        console.log("\n\nstart")
+        CommandHandler.handle(msg);
     }
 })
 

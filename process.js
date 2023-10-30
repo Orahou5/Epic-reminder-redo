@@ -14,7 +14,7 @@ export class Process {
     }
 
     static addCommands(id, commands) {
-        console.log("addcommands")
+        console.log("addcommands", id)
         if(this.commands[id] === undefined) {
             this.commands[id] = [];
         }
@@ -51,9 +51,9 @@ export class Preverification{
 
     static scan(message) {
         console.log("scan")
-        
+
         const ids = this.commandsLink.filter((link) => {
-            return Location?.[link.locationString]?.(message)?.includes(link.keyword) ?? false;
+            return Location[link.locationString](message).toLowerCase().includes(link.keyword.toLowerCase()) ?? false;
         }).map((link) => {
             return link.id;
         })
@@ -74,13 +74,14 @@ export function resolve(msg) {
 
     const array = Pending.filterPending(msg);
 
-    console.log("resolve", array);
-
     array.forEach((pending) => {
         const command = Process.getCommand(pending.commandId).find((command) => {
-            console.log("regexResolve : ", regexResolve(command.condition(pending.user), command.place(msg)));
             return regexResolve(command.condition(pending.user), command.place(msg));
         });
+
+        console.log("resolve", command.scenario_id);
+
+        if(command === undefined) return;
 
         const soul = {
             user: pending.user, 
