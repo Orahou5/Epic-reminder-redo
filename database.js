@@ -153,6 +153,20 @@ export function insertReminder(reminder) {
     });
 }
 
+export function getPlayer(discord_id) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT * FROM Player WHERE discord_id = ?
+        `;
+        db.get(query, [discord_id], (err, row) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(row);
+        });
+    });
+}
+
 export function insertPlayer(player) {
     return new Promise((resolve, reject) => {
         const query = `
