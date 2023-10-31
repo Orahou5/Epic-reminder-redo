@@ -59,3 +59,41 @@ export class Pending {
         });
     }
 }
+
+export class PendingMultiple {
+    static link = {};
+
+    static addPending(channelId, users, commandId) {
+        console.log("addpendingmultiple");
+
+        this.removeMultiplePending(users, commandId);
+
+        for(const user of users) {
+            const otherUsers = users.filter((u) => u.id !== user.id);
+            this.link[`${user.id}-${commandId}`] = otherUsers;
+            Pending.addPending(channelId, user, commandId);
+        }
+    }  
+    
+    static removeMultiplePending(users, commandId) {
+        console.log("removependingmultiplebis");
+
+        users.forEach((user) => {
+            this.removePending(user, commandId);
+        });
+    }
+
+    static removePending(user, commandId) {
+        console.log("removependingmultiple");
+
+        if(this.link[`${user.id}-${commandId}`] === undefined) return;
+
+        const otherUsers = this.link[`${user.id}-${commandId}`];
+
+        delete this.link[`${user.id}-${commandId}`];
+
+        Pending.removePending(user, commandId);
+
+        this.removeMultiplePending(otherUsers, commandId);
+    }
+}
