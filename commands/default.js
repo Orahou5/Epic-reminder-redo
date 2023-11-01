@@ -1,5 +1,7 @@
+import { insertReminder } from "../database.js"
 import { Location } from "../discordUtils.js"
 import { stopStory } from "../rule.js"
+import { showHoursMinutesSeconds } from "../utils.js"
 
 export const cryCommand = (saveMethod) => ({
     scenario_id: "cry",
@@ -23,4 +25,19 @@ export const epicJailCommand = {
     condition: (user) => `${user.username}.{2} is now in the jail`,
     place: (m) => Location.content(m),
     rule: async (soul, commandId) => stopStory(soul, commandId),
+}
+
+export function insertReminderRetry(reminder, delay = 10 * 1000) {
+    console.log("inserting");
+    showHoursMinutesSeconds(`inserting ${reminder.command_id}`);
+
+    insertReminder(reminder).then(() => {
+        console.log("inserted");
+    }).catch((err) => { 
+        console.log(err);
+
+        setTimeout(() => {
+            insertReminderRetry(reminder);
+        }, delay);
+    });
 }

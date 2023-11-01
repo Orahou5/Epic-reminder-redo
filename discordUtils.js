@@ -20,3 +20,7 @@ export function send(channel, content) {
         }, 5 * 60 * 1000);
     });
 }
+
+export function getIdFromMentionString(string) {
+    return string.match(/\d+/)[0];
+}

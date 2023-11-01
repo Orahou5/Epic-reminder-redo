@@ -19,3 +19,4 @@ export const dirLogMini = dirLogCut(1);
 export function applyPercentage(baseValue, percentage){
     return baseValue - (baseValue * percentage / 100);
 }
+
