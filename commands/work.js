@@ -1,12 +1,10 @@
-import { Pending } from "../Pending.js";
 import { CommandHandler } from "../commandHandler.js";
-import { insertReminder } from "../database.js";
 import { Location } from "../discordUtils.js";
 import { Display } from "../display.js";
+import { createPending } from "../pending.js";
 import { Preverification, Process } from "../process.js";
 import { stopStory } from "../rule.js";
-import { showHoursMinutesSeconds } from "../utils.js";
-import { cooldownCommand, epicJailCommand } from "./default.js";
+import { cooldownCommand, epicJailCommand, insertReminderRetry } from "./default.js";
 
 CommandHandler.addMultiplesTriggers([  
     "chop", "fish", "pickup", "mine", 
@@ -14,7 +12,7 @@ CommandHandler.addMultiplesTriggers([
     "bowsaw", "boat", "tractor", "drill",
     "chainsaw", "bigboat", "greenhouse", "dynamite" 
 ], async(msg) => {
-    Pending.addPending(msg.channel.id, msg.author, "work")
+    createPending(msg.channel.id, msg.author, "work")
 });
 
 const toBeRegistered = [
@@ -92,9 +90,7 @@ Preverification.addCommandLinks(preverif, "work");
 Display.addDisplay(`__|user|__ It's time for <:ruby:788422407677149234>**WORK**<:ruby:788422407677149234> *desu*`, "work", "default");
 
 function insertWork(soul, now, scenario_id) {
-    console.log("inserting");
-    showHoursMinutesSeconds("inserting work");
-    insertReminder({
+    insertReminderRetry({
         discord_id: soul.user.id,
         command_id: "work",
         dTime: 5 * 60 * 1000,
@@ -103,14 +99,5 @@ function insertWork(soul, now, scenario_id) {
         channel_id: soul.m.channel.id,
         message: Display.getDisplay(soul.user, "work", scenario_id),
         fixed_cd: true
-    }).then(() => {
-        console.log("inserted");
-        
-    }).catch((err) => { 
-        console.log(err) 
-
-        setTimeout(() => {
-            insertWork(soul, now, scenario_id);
-        }, 20 * 1000);
-    });
+    }, 20 * 1000);
 }

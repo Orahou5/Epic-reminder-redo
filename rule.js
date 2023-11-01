@@ -1,9 +1,9 @@
-import { Pending } from "./Pending.js";
 import { send } from "./discordUtils.js";
+import { findPending } from "./pending.js";
 
 export function stopStory(soul, commandId) {
     console.log("stoppending")
-    Pending.removePending(soul.user, commandId);
+    findPending(soul.user, commandId)?.removeFromPending();
 }
 
 export function ruleMove(soul) {

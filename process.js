@@ -1,5 +1,5 @@
-import { Pending } from "./Pending.js";
 import { Location } from "./discordUtils.js";
+import { filterPending } from "./pending.js";
 
 export class Process {
     static commands = {};
@@ -72,14 +72,14 @@ function regexResolve(stringReg, location) {
 export function resolve(msg) {
     const now = Date.now();
 
-    const array = Pending.filterPending(msg);
+    const array = filterPending(msg);
 
     array.forEach((pending) => {
         const command = Process.getCommand(pending.commandId).find((command) => {
             return regexResolve(command.condition(pending.user), command.place(msg));
         });
 
-        console.log("resolve", command.scenario_id);
+        console.log("resolve", command?.scenario_id);
 
         if(command === undefined) return;
 

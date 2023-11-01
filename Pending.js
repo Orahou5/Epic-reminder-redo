@@ -1,99 +1,115 @@
 import { Preverification } from "./process.js";
 
-export class Pending {
-    //TODO: change object name
-    static pending = {};
-    static symlink = {};
+const pending = {};
+const symlink = {};
 
-    static addPending(channelId, user, commandId) {
+class Pending {
+    constructor(user, commandId) {
+        this.user = user;
+        this.commandId = commandId;
+    }
+
+    addToPending(channelId) {
         console.log("addpending");
 
-        this.removePending(user, commandId);
-        this.symlink[`${user.id}-${commandId}`] = {
+        if(pending[channelId] === undefined) {
+            pending[channelId] = {};
+        }
+
+        const userComandId = `${this.user.id}-${this.commandId}`;
+
+        pending[channelId][userComandId] = this;
+
+        symlink[userComandId] = {
             channelId,
             disable_at: Date.now() + 1000 * 60 * 5
         };
-
-        if (this.pending[channelId] === undefined) {
-            this.pending[channelId] = {};
-        }
-
-        this.pending[channelId][`${user.id}-${commandId}`] = {
-            user,
-            commandId,
-        };
     }
 
-    static removePending(user, commandId) {
+    removeFromPending() {
         console.log("removepending");
 
-        const channelId = this.symlink[`${user.id}-${commandId}`]?.channelId;
+        const channelId = symlink[`${this.user.id}-${this.commandId}`]?.channelId;
 
         if (channelId === undefined) return;
 
-        delete this.pending[channelId][`${user.id}-${commandId}`];
-        delete this.symlink[`${user.id}-${commandId}`];
+        delete pending[channelId][`${this.user.id}-${this.commandId}`];
+        delete symlink[`${this.user.id}-${this.commandId}`];
     }
 
-    static filterPending(msg) {
-        console.log("filterpending");
-
-        if (this.pending[msg.channel.id] === undefined) return;
-
-        const array = Preverification.scan(msg);
-
-        return Object.values(this.pending[msg.channel.id]).filter((value) => {
-            return array.includes(value?.commandId);
-        });
-    }
-
-    static deleteExpired() {
-        console.log("deleteexpired");
-        
-        const now = Date.now();
-        Object.entries(this.symlink).forEach(([key, value]) => {
-            if (value.disabled_at <= now) {
-                const [userId, commandId] = key.split("-");
-                this.removePending(userId, commandId);
-            }
-        });
+    hasPending() {
+        return symlink[`${this.user.id}-${this.commandId}`] !== undefined;
     }
 }
 
-export class PendingMultiple {
-    static link = {};
+export function createPending(channelId, user, commandId) {
+    console.log("createpending");
 
-    static addPending(channelId, users, commandId) {
-        console.log("addpendingmultiple");
+    const pending = new Pending(user, commandId);
+    pending.addToPending(channelId);
 
-        this.removeMultiplePending(users, commandId);
+    return pending;
+}
 
-        for(const user of users) {
-            const otherUsers = users.filter((u) => u.id !== user.id);
-            this.link[`${user.id}-${commandId}`] = otherUsers;
-            Pending.addPending(channelId, user, commandId);
-        }
-    }  
+export function findPending(user, commandId) {
+    console.log("findpending");
+
+    const channelId = symlink[`${user.id}-${commandId}`]?.channelId;
+
+    return pending[channelId]?.[`${user.id}-${commandId}`];
+}
+
+export function filterPending(msg) {
+    console.log("filterpending");
+
+    if (pending[msg.channel.id] === undefined) return;
+
+    const array = Preverification.scan(msg);
+
+    return Object.values(pending[msg.channel.id]).filter((value) => {
+        return array.includes(value?.commandId);
+    });
+}
+
+export function deleteExpired() {
+    console.log("deleteexpired");
     
-    static removeMultiplePending(users, commandId) {
-        console.log("removependingmultiplebis");
+    const now = Date.now();
+    Object.entries(symlink).forEach(([key, value]) => {
+        if (value.disabled_at <= now) {
+            const [userId, commandId] = key.split("-");
+            this.removeFromPending(userId, commandId);
+        }
+    });
+}
 
-        users.forEach((user) => {
-            this.removePending(user, commandId);
-        });
-    }
+export function createConnectedPending(channelId, users, commandId) {
+    console.log("createconnectedpending");
 
-    static removePending(user, commandId) {
-        console.log("removependingmultiple");
+    const pendingProxy = new Proxy(Pending.prototype.removeFromPending, {
+        apply: function(target, thisArg, args) {
+            console.log(`Removing pending for user ${thisArg.user.id}`);
 
-        if(this.link[`${user.id}-${commandId}`] === undefined) return;
+            if(!thisArg.hasPending()) return;
 
-        const otherUsers = this.link[`${user.id}-${commandId}`];
+            target.apply(thisArg, args);
 
-        delete this.link[`${user.id}-${commandId}`];
+            users.forEach(user => {
+                if(user.id === thisArg.user.id) return;
 
-        Pending.removePending(user, commandId);
+                const pendingTemp = findPending(user, commandId);
+                
+                if(pendingTemp === undefined) return;
 
-        this.removeMultiplePending(otherUsers, commandId);
-    }
+                pendingTemp.removeFromPending();
+            });
+
+            return true;
+        }
+    });
+
+    users.forEach(user => {
+        const pendingUser = createPending(channelId, user, commandId);
+        pendingUser.removeFromPending = pendingProxy;
+    });
 }

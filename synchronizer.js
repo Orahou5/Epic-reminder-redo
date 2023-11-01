@@ -1,6 +1,6 @@
-import { Pending } from "./Pending.js";
 import { disableReminder, getReminders } from "./database.js";
 import { client } from "./index.js";
+import { deleteExpired } from "./pending.js";
 import { showHoursMinutesSeconds } from "./utils.js";
 
 class Timeloop {
@@ -72,7 +72,7 @@ function loopContent() {
 }
 
 function pendingInterval(){
-    Pending.deleteExpired();
+    deleteExpired();
 }
 
 export function startTimeloop() {

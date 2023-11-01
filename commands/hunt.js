@@ -1,15 +1,13 @@
-import { Pending } from "../Pending.js";
 import { CommandHandler } from "../commandHandler.js";
-import { insertReminder } from "../database.js";
 import { Location } from "../discordUtils.js";
 import { Display } from "../display.js";
+import { createPending } from "../pending.js";
 import { Preverification, Process } from "../process.js";
 import { stopStory } from "../rule.js";
-import { showHoursMinutesSeconds } from "../utils.js";
-import { cooldownCommand, cryCommand, epicJailCommand} from "./default.js";
+import { cooldownCommand, cryCommand, epicJailCommand, insertReminderRetry } from "./default.js";
 
 CommandHandler.addTrigger("hunt", async(msg) => {
-    Pending.addPending(msg.channel.id, msg.author, "hunt")
+    createPending(msg.channel.id, msg.author, "hunt");
 });
 
 const toBeRegistered = [
@@ -83,9 +81,7 @@ Preverification.addCommandLinks(preverif, "hunt");
 Display.addDisplay(`__|user|__ It's time for <:sword_dragon:805446534673596436>**HUNT**<:sword_dragon:805446534673596436> *desu*`, "hunt", "default");
 
 function insertHunt(soul, now, scenario_id) {
-    console.log("inserting");
-    showHoursMinutesSeconds("inserting hunt");
-    insertReminder({
+    insertReminderRetry({
         discord_id: soul.user.id,
         command_id: "hunt",
         dTime: 60 * 1000,
@@ -94,13 +90,5 @@ function insertHunt(soul, now, scenario_id) {
         channel_id: soul.m.channel.id,
         message: Display.getDisplay(soul.user, "hunt", scenario_id),
         fixed_cd: true
-    }).then(() => {
-        console.log("inserted");
-    }).catch((err) => { 
-        console.log(err);
-
-        setTimeout(() => {
-            insertHunt(soul, now, scenario_id);
-        }, 10 * 1000);
     });
 }
