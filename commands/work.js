@@ -4,7 +4,9 @@ import { Display } from "../display.js";
 import { createPending } from "../pending.js";
 import { Preverification, Process } from "../process.js";
 import { stopStory } from "../rule.js";
-import { cooldownCommand, epicJailCommand, insertReminderRetry } from "./default.js";
+import { defaultCommands, defaultCommandsPreverif, insertReminderRetry } from "./default.js";
+
+const command = "work";
 
 CommandHandler.addMultiplesTriggers([  
     "chop", "fish", "pickup", "mine", 
@@ -12,7 +14,7 @@ CommandHandler.addMultiplesTriggers([
     "bowsaw", "boat", "tractor", "drill",
     "chainsaw", "bigboat", "greenhouse", "dynamite" 
 ], async(msg) => {
-    createPending(msg.channel.id, msg.author, "work")
+    createPending(msg.channel.id, msg.author, command)
 });
 
 const toBeRegistered = [
@@ -25,7 +27,7 @@ const toBeRegistered = [
             insertWork(soul, now, this.scenario_id)
         }
     },
-    cooldownCommand,
+    ...defaultCommands,
     {
         scenario_id: "rubyDragonFight",
         condition: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
@@ -71,33 +73,31 @@ const toBeRegistered = [
             insertWork(soul, now, this.scenario_id)
         }
     },
-    epicJailCommand
 ];
 
-Process.addCommands("work", toBeRegistered)
+Process.addCommands(command, toBeRegistered)
 
 const preverif = [
     ["got", "content"],
     ["sleeps", "content"],
     ["ran", "content"],
     ["cried", "content"],
-    ["cooldown", "authorName"],
-    ["jail", "content"]
+    ...defaultCommandsPreverif
 ]
 
-Preverification.addCommandLinks(preverif, "work");
+Preverification.addCommandLinks(preverif, command);
 
-Display.addDisplay(`__|user|__ It's time for <:ruby:788422407677149234>**WORK**<:ruby:788422407677149234> *desu*`, "work", "default");
+Display.addDisplay(`__|user|__ It's time for <:ruby:788422407677149234>**WORK**<:ruby:788422407677149234> *desu*`, command, "default");
 
 function insertWork(soul, now, scenario_id) {
     insertReminderRetry({
         discord_id: soul.user.id,
-        command_id: "work",
+        command_id: command,
         dTime: 5 * 60 * 1000,
         time: now,
         enabled: true,
         channel_id: soul.m.channel.id,
-        message: Display.getDisplay(soul.user, "work", scenario_id),
+        message: Display.getDisplay(soul.user, command, scenario_id),
         fixed_cd: true
     }, 20 * 1000);
 }
