@@ -6,26 +6,28 @@ import { defaultCommands, defaultCommandsPreverif, insertReminderRetry, loseFigh
 
 const command = "adventure";
 
-CommandHandler.addMultiplesTriggers(["adv", "adventure"], async(msg) => {
-    createPending(msg.channel.id, msg.author, command);
-});
+{
+    CommandHandler.addMultiplesTriggers(["adv", "adventure"], async(msg) => {
+        createPending(msg.channel.id, msg.author, command);
+    });
 
-const toBeRegistered = [
-    winFight(insertadventure),
-    ...defaultCommands,
-    loseFight(insertadventure),
-];
+    const toBeRegistered = [
+        winFight(insertadventure),
+        ...defaultCommands,
+        loseFight(insertadventure),
+    ];
 
-Process.addCommands(command, toBeRegistered)
+    Process.addCommands(command, toBeRegistered)
 
-const preverif = [
-    ["found", "content"],
-    ...defaultCommandsPreverif
-]
+    const preverif = [
+        ["found", "content"],
+        ...defaultCommandsPreverif
+    ]
 
-Preverification.addCommandLinks(preverif, command);
+    Preverification.addCommandLinks(preverif, command);
 
-Display.addDisplay(`__|user|__ It's time for <:sword:788416329601908746>**ADVENTURE**<:sword:788416329601908746> *desu*`, command, "default");
+    Display.addDisplay(`__|user|__ It's time for <:sword:788416329601908746>**ADVENTURE**<:sword:788416329601908746> *desu*`, command, "default");
+}
 
 function insertadventure(soul, now, scenario_id) {
     insertReminderRetry({

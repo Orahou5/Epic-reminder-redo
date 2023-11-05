@@ -8,86 +8,88 @@ import { defaultCommands, defaultCommandsPreverif, insertReminderRetry } from ".
 
 const command = "work";
 
-CommandHandler.addMultiplesTriggers([  
-    "chop", "fish", "pickup", "mine", 
-    "axe", "net", "ladder", "pickaxe",
-    "bowsaw", "boat", "tractor", "drill",
-    "chainsaw", "bigboat", "greenhouse", "dynamite" 
-], async(msg) => {
-    createPending(msg.channel.id, msg.author, command)
-});
+{
+    CommandHandler.addMultiplesTriggers([  
+        "chop", "fish", "pickup", "mine", 
+        "axe", "net", "ladder", "pickaxe",
+        "bowsaw", "boat", "tractor", "drill",
+        "chainsaw", "bigboat", "greenhouse", "dynamite" 
+    ], async(msg) => {
+        createPending(msg.channel.id, msg.author, command)
+    });
 
-const toBeRegistered = [
-    {
-        scenario_id: "gotMaterials",
-        condition: (user) => `${user.username}.{2} got.*?(?:log|fish|apple|banana|ruby|coins)`,
-        place: (m) => Location.content(m),
-        rule: async (soul, commandId) => stopStory(soul, commandId),
-        save(soul, now) {
-            insertWork(soul, now, this.scenario_id)
-        }
-    },
-    ...defaultCommands,
-    {
-        scenario_id: "rubyDragonFight",
-        condition: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
-        place: (m) => Location.content(m),
-        async rule(soul, commandId){
-            ruleMove(soul);
-            stopStory(soul, commandId);
+    const toBeRegistered = [
+        {
+            scenario_id: "gotMaterials",
+            condition: (user) => `${user.username}.{2} got.*?(?:log|fish|apple|banana|ruby|coins)`,
+            place: (m) => Location.content(m),
+            rule: async (soul, commandId) => stopStory(soul, commandId),
+            save(soul, now) {
+                insertWork(soul, now, this.scenario_id)
+            }
         },
-        save(soul, now) {
-            insertWork(soul, now, this.scenario_id)
-        }
-    },
-    {
-        scenario_id: "rubyDragonRun",
-        condition: (user) => `${user.username}.{2} ran away`,
-        place: (m) => Location.content(m),
-        async rule(soul, commandId){
-            ruleMove(soul);
-            stopStory(soul, commandId);
+        ...defaultCommands,
+        {
+            scenario_id: "rubyDragonFight",
+            condition: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
+            place: (m) => Location.content(m),
+            async rule(soul, commandId){
+                ruleMove(soul);
+                stopStory(soul, commandId);
+            },
+            save(soul, now) {
+                insertWork(soul, now, this.scenario_id)
+            }
         },
-        save(soul, now) {
-            insertWork(soul, now, this.scenario_id)
-        }
-    },
-    {
-        scenario_id: "rubyDragonSleep",
-        condition: (user) => `${user.username}.{2} sleeps.*?got 2`,
-        place: (m) => Location.content(m),
-        async rule(soul, commandId){
-            ruleMove(soul);
-            stopStory(soul, commandId);
+        {
+            scenario_id: "rubyDragonRun",
+            condition: (user) => `${user.username}.{2} ran away`,
+            place: (m) => Location.content(m),
+            async rule(soul, commandId){
+                ruleMove(soul);
+                stopStory(soul, commandId);
+            },
+            save(soul, now) {
+                insertWork(soul, now, this.scenario_id)
+            }
         },
-        save(soul, now) {
-            insertWork(soul, now, this.scenario_id)
-        }
-    },
-    {
-        scenario_id: "workSleepCry",
-        condition: (user) => `${user.username}.{2} (?:cried|sleeps)`,
-        place: (m) => Location.content(m),
-        rule: async (soul, commandId) => stopStory(soul, commandId),
-        save(soul, now) {
-            insertWork(soul, now, this.scenario_id)
-        }
-    },
-];
+        {
+            scenario_id: "rubyDragonSleep",
+            condition: (user) => `${user.username}.{2} sleeps.*?got 2`,
+            place: (m) => Location.content(m),
+            async rule(soul, commandId){
+                ruleMove(soul);
+                stopStory(soul, commandId);
+            },
+            save(soul, now) {
+                insertWork(soul, now, this.scenario_id)
+            }
+        },
+        {
+            scenario_id: "workSleepCry",
+            condition: (user) => `${user.username}.{2} (?:cried|sleeps)`,
+            place: (m) => Location.content(m),
+            rule: async (soul, commandId) => stopStory(soul, commandId),
+            save(soul, now) {
+                insertWork(soul, now, this.scenario_id)
+            }
+        },
+    ];
 
-Process.addCommands(command, toBeRegistered)
+    Process.addCommands(command, toBeRegistered)
 
-const preverif = [
-    ["got", "content"],
-    ["sleeps", "content"],
-    ["ran", "content"],
-    ["cried", "content"],
-    ...defaultCommandsPreverif
-]
+    const preverif = [
+        ["got", "content"],
+        ["sleeps", "content"],
+        ["ran", "content"],
+        ["cried", "content"],
+        ...defaultCommandsPreverif
+    ]
 
-Preverification.addCommandLinks(preverif, command);
+    Preverification.addCommandLinks(preverif, command);
 
-Display.addDisplay(`__|user|__ It's time for <:ruby:788422407677149234>**WORK**<:ruby:788422407677149234> *desu*`, command, "default");
+    Display.addDisplay(`__|user|__ It's time for <:ruby:788422407677149234>**WORK**<:ruby:788422407677149234> *desu*`, command, "default");
+}
 
 function insertWork(soul, now, scenario_id) {
     insertReminderRetry({

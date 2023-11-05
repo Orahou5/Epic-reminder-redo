@@ -8,61 +8,63 @@ import { cryCommand, defaultCommands, defaultCommandsPreverif, insertReminderRet
 
 const command = "hunt";
 
-CommandHandler.addTrigger("hunt", async(msg) => {
-    createPending(msg.channel.id, msg.author, command);
-});
+{
+    CommandHandler.addTrigger("hunt", async(msg) => {
+        createPending(msg.channel.id, msg.author, command);
+    });
 
-const toBeRegistered = [
-    winFight(insertHunt),
-    ...defaultCommands,
-    {
-        scenario_id: "fightTogether",
-        condition: (user) => `${user.username}.*? are hunting together`,
-        place: (m) => Location.content(m),
-        rule: async (soul, commandId) => stopStory(soul, commandId),
-        save(soul, now) {
-            insertHunt(soul, now, this.scenario_id)
-        }
-    },
-    {
-        scenario_id: "zombieFight",
-        condition: (user) => `${user.username}.{2} fights the horde`,
-        place: (m) => Location.content(m),
-        rule: async (soul, commandId) => stopStory(soul, commandId),
-        save(soul, now) {
-            insertHunt(soul, now, this.scenario_id)
-        }
-    },
-    {
-        scenario_id: "zombieJoin",
-        condition: (user) => `${user.username}.{2} pretends`,
-        place: (m) => Location.content(m),
-        async rule(soul, commandId){
-            ruleMove(soul);
-            stopStory(soul, commandId);
+    const toBeRegistered = [
+        winFight(insertHunt),
+        ...defaultCommands,
+        {
+            scenario_id: "fightTogether",
+            condition: (user) => `${user.username}.*? are hunting together`,
+            place: (m) => Location.content(m),
+            rule: async (soul, commandId) => stopStory(soul, commandId),
+            save(soul, now) {
+                insertHunt(soul, now, this.scenario_id)
+            }
         },
-        save(soul, now) {
-            insertHunt(soul, now, this.scenario_id)
-        }
-    },
-    loseFight(insertHunt),
-    cryCommand(insertHunt),
-];
+        {
+            scenario_id: "zombieFight",
+            condition: (user) => `${user.username}.{2} fights the horde`,
+            place: (m) => Location.content(m),
+            rule: async (soul, commandId) => stopStory(soul, commandId),
+            save(soul, now) {
+                insertHunt(soul, now, this.scenario_id)
+            }
+        },
+        {
+            scenario_id: "zombieJoin",
+            condition: (user) => `${user.username}.{2} pretends`,
+            place: (m) => Location.content(m),
+            async rule(soul, commandId){
+                ruleMove(soul);
+                stopStory(soul, commandId);
+            },
+            save(soul, now) {
+                insertHunt(soul, now, this.scenario_id)
+            }
+        },
+        loseFight(insertHunt),
+        cryCommand(insertHunt),
+    ];
 
-Process.addCommands(command, toBeRegistered)
+    Process.addCommands(command, toBeRegistered)
 
-const preverif = [
-    ["pretends", "content"],
-    ["together", "content"],
-    ["fights", "content"],
-    ["cried", "content"],
-    ["found", "content"],
-    ...defaultCommandsPreverif
-]
+    const preverif = [
+        ["pretends", "content"],
+        ["together", "content"],
+        ["fights", "content"],
+        ["cried", "content"],
+        ["found", "content"],
+        ...defaultCommandsPreverif
+    ]
 
-Preverification.addCommandLinks(preverif, command);
+    Preverification.addCommandLinks(preverif, command);
 
-Display.addDisplay(`__|user|__ It's time for <:sword_dragon:805446534673596436>**HUNT**<:sword_dragon:805446534673596436> *desu*`, command, "default");
+    Display.addDisplay(`__|user|__ It's time for <:sword_dragon:805446534673596436>**HUNT**<:sword_dragon:805446534673596436> *desu*`, command, "default");
+}
 
 function insertHunt(soul, now, scenario_id) {
     insertReminderRetry({
