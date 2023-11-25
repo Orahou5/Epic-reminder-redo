@@ -1,10 +1,8 @@
 import { CommandHandler } from "../commandHandler.js";
-import { Location, getIdFromMentionString } from "../discordUtils.js";
-import { Display } from "../display.js";
+import { getIdFromMentionString } from "../discordUtils.js";
 import { createConnectedPending } from "../pending.js";
-import { Preverification, Process } from "../process.js";
-import { stopStory } from "../rule.js";
-import { defaultCommands, defaultCommandsPreverif, insertReminderRetry } from "./default.js";
+import { Preverification, Process, Settings } from "../process.js";
+import { defaultCommands, defaultCommandsPreverif, defaultProcess, defaultProcessWithoutSave } from "./default.js";
 
 const command = "duel";
 
@@ -25,21 +23,20 @@ const command = "duel";
 
     const toBeRegistered = [
         {
-            scenario_id: "duelEnd",
-            condition: (user) => `${user.username}.*?boom`,
-            place: (m) => Location.description(m),
-            rule: async (soul, commandId) => stopStory(soul, commandId),
-            save(soul, now) {
-                insertDuel(soul, now, this.scenario_id)
-            }
+            data: {
+                condition: (user) => `${user.username}.*?boom`,
+                location: "description",
+            },
+            process: defaultProcess,
         },
         ...defaultCommands,
         {
-            scenario_id: "duelCancel",
-            condition: (user) => `${user.username}.{4} Duel cancelled`,
-            place: (m) => Location.content(m),
-            rule: async (soul, commandId) => stopStory(soul, commandId),
-        }
+            data: {
+                condition: (user) => `${user.username}.{4} Duel cancelled`,
+                location: "content",
+            },
+            process: defaultProcessWithoutSave,
+        },
     ];
 
     Process.addCommands(command, toBeRegistered)
@@ -52,18 +49,9 @@ const command = "duel";
 
     Preverification.addCommandLinks(preverif, command);
 
-    Display.addDisplay(`__|user|__ It's time for <:crossed_sword:788431002510557214>**DUEL**<:crossed_sword:788431002510557214> *desu*`, command, "default");
-}
-
-function insertDuel(soul, now, scenario_id) {
-    insertReminderRetry({
-        discord_id: soul.user.id,
-        command_id: command,
+    Settings.add(command, {
         dTime: 2 * 60 * 60 * 1000,
-        time: now,
-        enabled: true,
-        channel_id: soul.m.channel.id,
-        message: Display.getDisplay(soul.user, command, scenario_id),
-        fixed_cd: true
+        fixed_cd: true,
+        emoji: "<:crossed_sword:788431002510557214>"
     });
 }

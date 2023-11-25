@@ -1,10 +1,7 @@
 import { CommandHandler } from "../commandHandler.js";
-import { Location } from "../discordUtils.js";
-import { Display } from "../display.js";
 import { createPending } from "../pending.js";
-import { Preverification, Process } from "../process.js";
-import { stopStory } from "../rule.js";
-import { cryCommand, defaultCommands, defaultCommandsPreverif, insertReminderRetry } from "./default.js";
+import { Preverification, Process, Settings } from "../process.js";
+import { cryCommand, defaultCommands, defaultCommandsPreverif, defaultProcess } from "./default.js";
 
 const command = "farm";
 
@@ -15,34 +12,28 @@ const command = "farm";
 
     const toBeRegistered = [
         {
-            scenario_id: "plantFarm",
-            condition: (user) => `${user.username}.{2} plants.*?seed`,
-            place: (m) => Location.content(m),
-            rule: async (soul, commandId) => stopStory(soul, commandId),
-            save(soul, now) {
-                insertFarm(soul, now, this.scenario_id)
-            }
+            data: {
+                condition: (user) => `${user.username}.{2} plants.*?seed`,
+                location: "content",
+            },
+            process: defaultProcess
         },
         ...defaultCommands,
         {
-            scenario_id: "farmFight",
-            condition: (user) => `${user.username}.{2} HITS THE FLOOR WITH THEIR FISTS`,
-            place: (m) => Location.content(m),
-            rule: async (soul, commandId) => stopStory(soul, commandId),
-            save(soul, now) {
-                insertFarm(soul, now, this.scenario_id);
+            data: {
+                condition: (user) => `${user.username}.{2} HITS THE FLOOR WITH THEIR FISTS`,
+                location: "content",
             },
+            process: defaultProcess
         },
         {
-            scenario_id: "farmAnother",
-            condition: (user) => `${user.username}.{2} is about to plant another seed`,
-            place: (m) => Location.content(m),
-            rule: async (soul, commandId) => stopStory(soul, commandId),
-            save(soul, now) {
-                insertFarm(soul, now, this.scenario_id);
+            data: {
+                condition: (user) => `${user.username}.{2} is about to plant another seed`,
+                location: "content",
             },
+            process: defaultProcess
         },
-        cryCommand(insertFarm),
+        cryCommand,
     ];
 
     Process.addCommands(command, toBeRegistered)
@@ -56,18 +47,9 @@ const command = "farm";
 
     Preverification.addCommandLinks(preverif, command);
 
-    Display.addDisplay(`__|user|__ It's time for :egg:**FARM**:egg: *desu*`, command, "default");
-}
-
-function insertFarm(soul, now, scenario_id) {
-    insertReminderRetry({
-        discord_id: soul.user.id,
-        command_id: command,
+    Settings.add(command, {
         dTime: 10 * 60 * 1000,
-        time: now,
-        enabled: true,
-        channel_id: soul.m.channel.id,
-        message: Display.getDisplay(soul.user, command, scenario_id),
-        fixed_cd: true
+        fixed_cd: true,
+        emoji: ":egg:"
     });
 }

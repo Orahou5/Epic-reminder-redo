@@ -6,6 +6,7 @@ import { closeDatabase } from "./database.js";
 import "./imported.js";
 import { resolve } from "./process.js";
 import { startTimeloop } from "./synchronizer.js";
+import { extendsMessage } from "./discordUtils.js";
 
 export const client = new Client({ 
     auth: `Bot ${process.env.DISCORD_TOKEN_ERPG}`,
@@ -25,7 +26,8 @@ client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
     if(msg.author.id === erpgId) {
-        resolve(msg);
+        const extendedMsg = extendsMessage(msg);
+        resolve(extendedMsg);
     }
 
     if(msg.content.startsWith("rpg")) {
