@@ -19,3 +19,13 @@ export const dirLogMini = dirLogCut(1);
 export function applyPercentage(baseValue, percentage){
     return baseValue - (baseValue * percentage / 100);
 }
+
+export function convertToMilliseconds({
+    days = 0,
+    hours = 0,
+    minutes = 0,
+    seconds = 0,
+    milliseconds = 0,
+}) {
+    return milliseconds + 1000 * (seconds + 60 * (minutes + 60 * (hours + 24 * days)));
+}
