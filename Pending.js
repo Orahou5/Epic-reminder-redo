@@ -1,4 +1,4 @@
-import { Preverification } from "./process.js";
+import { Process } from "./process.js";
 
 const pending = {};
 const symlink = {};
@@ -64,11 +64,15 @@ export function filterPending(msg) {
 
     if (pending[msg.channel.id] === undefined) return;
 
-    const array = Preverification.scan(msg);
+    const scannedCommands = Process.scan(msg);
 
-    return Object.values(pending[msg.channel.id]).filter((value) => {
-        return array.includes(value?.commandId);
-    });
+    return {
+        pending: Object.values(pending[msg.channel.id]).filter((value) => {
+            return Object.keys(scannedCommands).includes(value?.commandId);
+        }),
+        commands: scannedCommands
+    }
+    
 }
 
 export function deleteExpired() {

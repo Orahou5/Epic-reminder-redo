@@ -1,7 +1,9 @@
 import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
-import { Preverification, Process, Settings } from "../process.js";
-import { defaultCommands, defaultCommandsPreverif, defaultProcess, defaultProcessWithMove } from "./default.js";
+import { Process, Settings } from "../process.js";
+import { convertToMilliseconds } from "../utils.js";
+import { defaultCommands } from "./commons/commands.js";
+import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
 
 const command = "work";
 
@@ -14,61 +16,46 @@ const command = "work";
     ], async(msg) => {
         createPending(msg.channel.id, msg.author, command)
     });
+    
+    Settings.add(command, {
+        dTime: convertToMilliseconds({minutes: 5}),
+        fixed_cd: true,
+        emoji: "<:ruby:788422407677149234>"
+    });
 
     const toBeRegistered = [
         {
-            data: {
-                condition: (user) => `${user.username}.{2} got.*?(?:log|fish|apple|banana|ruby|coins)`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} got.*?(?:log|fish|apple|banana|ruby|coins)`,
+            preverif: "got",
+            location: "content",
             process: defaultProcess
         },
         ...defaultCommands,
         {
-            data: {
-                condition: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
+            preverif: "got",
+            location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: {
-                condition: (user) => `${user.username}.{2} ran away`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} ran away`,
+            preverif: "ran",
+            location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: {
-                condition: (user) => `${user.username}.{2} sleeps.*?got 2`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} sleeps.*?got 2`,
+            preverif: "sleeps",
+            location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: {
-                condition: (user) => `${user.username}.{2} (?:cried|sleeps)`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} (?:cried|sleeps)`,
+            preverif: "cried",
+            location: "content",
             process: defaultProcess
         }
     ];
 
     Process.addCommands(command, toBeRegistered)
-
-    const preverif = [
-        ["got", "content"],
-        ["sleeps", "content"],
-        ["ran", "content"],
-        ["cried", "content"],
-        ...defaultCommandsPreverif
-    ]
-
-    Preverification.addCommandLinks(preverif, command);
-
-    Settings.add(command, {
-        dTime: 5 * 60 * 1000,
-        fixed_cd: true,
-        emoji: "<:ruby:788422407677149234>"
-    });
 }

@@ -1,7 +1,9 @@
 import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
-import { Preverification, Process, Settings } from "../process.js";
-import { cryCommand, defaultCommands, defaultCommandsPreverif, defaultProcess, defaultProcessWithMove, loseFight, winFight } from "./default.js";
+import { Process, Settings } from "../process.js";
+import { convertToMilliseconds } from "../utils.js";
+import { cryCommand, defaultCommands, loseFight, winFight } from "./commons/commands.js";
+import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
 
 const command = "hunt";
 
@@ -10,51 +12,36 @@ const command = "hunt";
         createPending(msg.channel.id, msg.author, command);
     });
 
+    Settings.add(command, {
+        dTime: convertToMilliseconds({minutes: 1}),
+        fixed_cd: true,
+        emoji: "<:sword_dragon:805446534673596436>"
+    });
+
     const toBeRegistered = [
         winFight,
         ...defaultCommands,
         {
-            data: {
-                condition: (user) => `${user.username}.*? are hunting together`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.*? are hunting together`,
+            preverif: "together",
+            location: "content",
             process: defaultProcess
         },
         {
-            data: {
-                condition: (user) => `${user.username}.{2} fights the horde`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} fights the horde`,
+            preverif: "fights",
+            location: "content",
             process: defaultProcess
         },
         {
-            data: {
-                condition: (user) => `${user.username}.{2} pretends`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{2} pretends`,
+            preverif: "pretends",
+            location: "content",
             process: defaultProcessWithMove
-
         },
         loseFight,
         cryCommand,
     ];
 
     Process.addCommands(command, toBeRegistered)
-
-    const preverif = [
-        ["pretends", "content"],
-        ["together", "content"],
-        ["fights", "content"],
-        ["cried", "content"],
-        ["found", "content"],
-        ...defaultCommandsPreverif
-    ]
-
-    Preverification.addCommandLinks(preverif, command);
-
-    Settings.add(command, {
-        dTime: 60 * 1000,
-        fixed_cd: true,
-        emoji: "<:sword_dragon:805446534673596436>"
-    });
 }

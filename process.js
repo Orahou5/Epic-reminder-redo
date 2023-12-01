@@ -23,38 +23,18 @@ export const Process = {
 
     getCommand(id) {
         return this.commands[id];
-    }
-}
-
-export const Preverification = {
-    commandsLink: [],
-
-    addCommandLink(keyword, id) {
-        this.commandsLink.push({
-            keyword: keyword[0],
-            locationString: keyword[1],
-            id
-        });
-
-        return this;
-    },
-
-    addCommandLinks(arrayOfKeyword, id) {
-        arrayOfKeyword.forEach((keyword) => {
-            this.addCommandLink(keyword, id);
-        });
-
-        return this;
     },
 
     scan(message) {
-        const ids = this.commandsLink.filter((link) => {
-            return message[link.locationString].toLowerCase().includes(link.keyword.toLowerCase()) ?? false;
-        }).map((link) => {
-            return link.id;
-        })
-
-        return [...new Set(ids)]
+        return Object.entries(this.commands).reduce((acc, [id, commands]) => {
+            const filteredCommands = commands.filter((command) => {
+                return message[command.location].toLowerCase().includes(command.preverif)
+            })
+            if(filteredCommands.length > 0) {
+                acc[id] = filteredCommands;
+            }
+            return acc;
+        }, {});
     }
 }
 
@@ -73,14 +53,14 @@ export const Settings = {
 export function resolve(msg) {
     const now = Date.now();
 
-    const array = filterPending(msg);
+    const object = filterPending(msg);
 
-    array.forEach((pending) => {
-        const command = Process.getCommand(pending.commandId).find((command) => {
-            return msg.regexResolve(command.data.condition(pending.user), command.data.location);
+    object.pending.forEach((pending) => {
+        const command = object.commands[pending.commandId].find((command) => {
+            return msg.regexResolve(command.data(pending.user), command.location);
         });
 
-        console.log("resolve", pending?.user?.username, pending.commandId, command?.data?.condition(pending.user));
+        console.log("resolve", pending?.user?.username, pending.commandId, command?.data?.(pending.user));
 
         if(command === undefined) return;
 
@@ -90,5 +70,5 @@ export function resolve(msg) {
         }
 
         command.process(soul, pending.commandId, now);
-    })
+    });
 }

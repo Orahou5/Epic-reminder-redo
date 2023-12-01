@@ -1,8 +1,9 @@
 import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
-import { Preverification, Process, Settings } from "../process.js";
+import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { defaultCommands, defaultCommandsPreverif, defaultProcess } from "./default.js";
+import { defaultCommands } from "./commons/commands.js";
+import { defaultProcess } from "./commons/process.js";
 
 const command = "daily";
 
@@ -11,29 +12,21 @@ const command = "daily";
         createPending(msg.channel.id, msg.author, command);
     });
 
-    const toBeRegistered = [
-        ...defaultCommands,
-        {
-            data: {
-                condition: (user) => `${user.username} — daily`,
-                location: "authorName",
-            },
-            process: defaultProcess
-        }
-    ];
-
-    Process.addCommands(command, toBeRegistered)
-
-    const preverif = [
-        ["daily", "authorName"],
-        ...defaultCommandsPreverif
-    ]
-
-    Preverification.addCommandLinks(preverif, command);
-
     Settings.add(command, {
         dTime: convertToMilliseconds({days: 1}),
         fixed_cd: true,
         emoji: "<:daily:939925508186062848>"
     });
+
+    const toBeRegistered = [
+        ...defaultCommands,
+        {
+            data: (user) => `${user.username} — daily`,
+            preverif: "daily",
+            location: "authorName",
+            process: defaultProcess
+        }
+    ];
+
+    Process.addCommands(command, toBeRegistered)
 }

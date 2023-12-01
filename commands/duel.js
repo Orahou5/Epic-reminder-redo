@@ -1,8 +1,10 @@
 import { CommandHandler } from "../commandHandler.js";
 import { getIdFromMentionString } from "../discordUtils.js";
 import { createConnectedPending } from "../pending.js";
-import { Preverification, Process, Settings } from "../process.js";
-import { defaultCommands, defaultCommandsPreverif, defaultProcess, defaultProcessWithoutSave } from "./default.js";
+import { Process, Settings } from "../process.js";
+import { convertToMilliseconds } from "../utils.js";
+import { defaultCommands } from "./commons/commands.js";
+import { defaultProcess, defaultProcessWithoutSave } from "./commons/process.js";
 
 const command = "duel";
 
@@ -20,38 +22,28 @@ const command = "duel";
 
         createConnectedPending(msg.channel.id, users, command);
     });
+    
+    Settings.add(command, {
+        dTime: convertToMilliseconds({hours: 2}),
+        fixed_cd: true,
+        emoji: "<:crossed_sword:788431002510557214>"
+    });
 
     const toBeRegistered = [
         {
-            data: {
-                condition: (user) => `${user.username}.*?boom`,
-                location: "description",
-            },
+            data: (user) => `${user.username}.*?boom`,
+            preverif: "boom",
+            location: "description",
             process: defaultProcess,
         },
         ...defaultCommands,
         {
-            data: {
-                condition: (user) => `${user.username}.{4} Duel cancelled`,
-                location: "content",
-            },
+            data: (user) => `${user.username}.{4} Duel cancelled`,
+            preverif: "cancelled",
+            location: "content",
             process: defaultProcessWithoutSave,
         },
     ];
 
     Process.addCommands(command, toBeRegistered)
-
-    const preverif = [
-        ["cancelled", "content"],
-        ["boom", "description"],
-        ...defaultCommandsPreverif
-    ]
-
-    Preverification.addCommandLinks(preverif, command);
-
-    Settings.add(command, {
-        dTime: 2 * 60 * 60 * 1000,
-        fixed_cd: true,
-        emoji: "<:crossed_sword:788431002510557214>"
-    });
 }
