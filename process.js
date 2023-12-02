@@ -55,6 +55,8 @@ export function resolve(msg) {
 
     const object = filterPending(msg);
 
+    if(object === undefined) return;
+
     object.pending.forEach((pending) => {
         const command = object.commands[pending.commandId].find((command) => {
             return msg.regexResolve(command.data(pending.user), command.location);

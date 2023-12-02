@@ -12,6 +12,8 @@ const command = "duel";
     CommandHandler.addTrigger("duel", async(msg) => {
         const users = getMultiplesUsersFromMessage(msg, 1, 1);
 
+        if(users === undefined) return;
+
         createConnectedPending(msg.channel.id, users, command);
     });
     
