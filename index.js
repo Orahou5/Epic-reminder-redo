@@ -2,7 +2,7 @@ import "dotenv/config.js";
 import { Client } from "oceanic.js";
 import { CommandHandler } from "./commandHandler.js";
 import "./database.js";
-import { closeDatabase } from "./database.js";
+import { closeDatabase, unpauseAllReminders } from "./database.js";
 import "./imported.js";
 import { resolve } from "./process.js";
 import { startTimeloop } from "./synchronizer.js";
@@ -19,11 +19,15 @@ const erpgId = "555955826880413696"
 
 client.once("ready", async() => {
     console.log("Ready as", client.user.tag);
+    unpauseAllReminders();
     startTimeloop();
 });
 
 client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
+
+    /*console.log("messageContent", msg.content)
+    console.log("messageEmbeds", msg.embeds)*/
 
     if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

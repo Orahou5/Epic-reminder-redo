@@ -10,6 +10,29 @@ export function escape(string){
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
+export function getCooldownFromMsg(msg, location) {
+    const match = msg[location].match(/[^*]+\*\*([^\*]+)/si)?.[1];
+    if(match === undefined) return;
+    const exchange = {
+        s: "seconds",
+        m: "minutes",
+        h: "hours",
+        d: "days",
+    }
+    const timeObj = match.split(" ").reduce((acc, curr) => {
+        curr.slice(-1)
+        parseInt(curr.slice(0, -1));
+
+        acc[exchange[curr.slice(-1)]] = parseInt(curr.slice(0, -1));
+
+        return acc;
+        
+    }, {});
+
+    return convertToMilliseconds(timeObj);
+
+}
+
 export const dirLogCut = depth => item => console.dir(item, { depth: depth }) || item;
 
 export const dirLog = dirLogCut(null);

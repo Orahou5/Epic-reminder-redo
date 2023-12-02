@@ -91,6 +91,56 @@ export function getReminders(delay = 0) {
     });
 }
 
+export function unpauseAllReminders() {
+    return new Promise((resolve, reject) => {
+        const query = `
+            UPDATE Reminder
+            SET enabled = 1
+            WHERE enabled = 2
+        `;
+        db.run(query, [], (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
+export function unpauseReminder(discord_id, command_id) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            UPDATE Reminder
+            SET enabled = 1
+            WHERE discord_id = ?
+            AND command_id = ?
+        `;
+        db.run(query, [discord_id, command_id], (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
+export function pauseReminder(discord_id, command_id) {
+    return new Promise((resolve, reject) => {
+        const query = `
+            UPDATE Reminder
+            SET enabled = 2
+            WHERE discord_id = ?
+            AND command_id = ?
+        `;
+        db.run(query, [discord_id, command_id], (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
 export function disableReminder(discord_id, command_id) {
     return new Promise((resolve, reject) => {
         const query = `

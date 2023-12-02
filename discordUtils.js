@@ -23,6 +23,12 @@ export function extendsMessage(msg) {
                         return regex.test(receiver[location]);
                     }
                 default:
+                    const multipleProp = prop.split("=")
+                    if(multipleProp.length > 1) {
+                        return multipleProp.reduce((acc, curr) => {
+                            return `${acc}=${receiver[curr]}`;
+                        }, "");
+                    }
                     return Reflect.get(target, prop);
             }
         }

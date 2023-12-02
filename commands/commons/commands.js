@@ -1,4 +1,4 @@
-import { defaultProcess, defaultProcessWithoutSave } from "./process.js"
+import { defaultProcess, defaultProcessWithCustomTime, defaultProcessWithoutSave } from "./process.js"
 
 export const cryCommand = {
     data: (user) => `${user.username}.{2} cried`,
@@ -7,14 +7,23 @@ export const cryCommand = {
     process: defaultProcess,
 }
 
+export function cooldownPersonalization(regString, preverif = null) {
+    return {
+        data: (user) => `${user.username} — cooldown=.*?${regString}`,
+        preverif: preverif ?? regString,
+        location: "authorName=title",
+        process: defaultProcessWithCustomTime.bind({location: "authorName=title"})
+    }
+}
+
 const cooldownCommand = {
     data: (user) => `${user.username} — cooldown`,
     preverif: "cooldown",
-    location: "authorName",
+    location: "authorName=title",
     process: defaultProcessWithoutSave,
 }
 
-const epicJailCommand = {
+export const epicJailCommand = {
     data: (user) => `${user.username}.{2} is now in the jail`,
     preverif: "jail",
     location: "content",

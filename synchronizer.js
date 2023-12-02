@@ -1,7 +1,7 @@
-import { disableReminder, getReminders } from "./database.js";
+import { disableReminder, getReminders, pauseReminder, unpauseReminder } from "./database.js";
 import { client } from "./index.js";
 import { deleteExpired } from "./pending.js";
-import { showHoursMinutesSeconds } from "./utils.js";
+import { convertToMilliseconds, showHoursMinutesSeconds } from "./utils.js";
 
 class Timeloop {
     static scenarios = [];
@@ -16,23 +16,24 @@ class Timeloop {
 
     static addScenarios(scenarios) {
         if(scenarios?.length === 0) return;
-        this.scenarios.push(...scenarios);
+        this.scenarios = scenarios;
+        showHoursMinutesSeconds(`adding scenarios : modified : ${this.modified}`)
         this.modified = true;
         this.run.next("add");
     }
 
     static async *start(){
         while(true){
+            this.modified = false;
+            //console.log(this.scenarios)
             if(this.scenarios.length === 0){
                 yield;
+                continue;
             }
 
             const scenario = this.scenarios.shift();
 
             if(scenario.timer > Date.now()){
-
-                
-
                 showHoursMinutesSeconds(`sleeping for ${scenario.timer - Date.now()} command : ${scenario.command_id} id : ${scenario.discord_id}`)
 
                 this.sleep(scenario.timer - Date.now());
@@ -41,18 +42,19 @@ class Timeloop {
                 showHoursMinutesSeconds(`scenario sleep command : ${scenario.command_id} id : ${scenario.discord_id}`)
 
                 if(this.modified){
-                    console.log("modified")
-                    this.modified = false;
+                    console.log(`${this.modified} modified`)
                     continue;
                 }
             }
             showHoursMinutesSeconds(`scenario send command : ${scenario.command_id} id : ${scenario.discord_id}`)
+            pauseReminder(scenario.discord_id, scenario.command_id);
             client.rest.channels.createMessage(scenario.channel_id, {
                 content: scenario.message,
             }).then(() => {
                 disableReminder(scenario.discord_id, scenario.command_id);
             }).catch((err) => {
                 console.log(err);
+                unpauseReminder(scenario.discord_id, scenario.command_id);
             });
         }
     }
@@ -66,7 +68,7 @@ class Timeloop {
 }
 
 function loopContent() {
-    getReminders(40 * 1000).then((reminders) => {
+    getReminders(30 * 1000).then((reminders) => {
         Timeloop.addScenarios(reminders)
     });
 }
@@ -77,6 +79,6 @@ function pendingInterval(){
 
 export function startTimeloop() {
     loopContent();
-    setInterval(loopContent, 30 * 1000);
-    setInterval(pendingInterval, 5 * 60 * 1000);
+    setInterval(loopContent, convertToMilliseconds({seconds: 40}));
+    setInterval(pendingInterval, convertToMilliseconds({minutes: 5}));
 }

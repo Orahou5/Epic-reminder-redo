@@ -2,7 +2,7 @@ import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { cryCommand, defaultCommands, loseFight, winFight } from "./commons/commands.js";
+import { cooldownPersonalization, cryCommand, epicJailCommand, loseFight, winFight } from "./commons/commands.js";
 import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
 
 const command = "hunt";
@@ -20,10 +20,16 @@ const command = "hunt";
 
     const toBeRegistered = [
         winFight,
-        ...defaultCommands,
+        cooldownPersonalization("looked around"),
         {
             data: (user) => `${user.username}.*? are hunting together`,
             preverif: "together",
+            location: "content",
+            process: defaultProcess
+        },
+        {
+            data: (user) => `${user.username}\\*{2} found a`,
+            preverif: "found a",
             location: "content",
             process: defaultProcess
         },
@@ -41,6 +47,7 @@ const command = "hunt";
         },
         loseFight,
         cryCommand,
+        epicJailCommand
     ];
 
     Process.addCommands(command, toBeRegistered)
