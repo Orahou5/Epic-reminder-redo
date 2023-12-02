@@ -44,5 +44,20 @@ export function send(channel, content) {
 }
 
 export function getIdFromMentionString(string) {
-    return string.match(/\d+/)[0];
+    return string.match(/^<@!?(\d+)>$/)?.[1];
+}
+
+export function getMultiplesUsersFromMessage(msg, min = 1, max = 10) {
+    const args  = msg.content.split(" ");
+
+    if(args.length < 2 + min) return;
+
+    const users = [msg.author];
+
+    for(let i = 2; i < 2 + max && i < args.length; i++) {
+        const otherUser = msg.mentions.users.find((user) => user.id === getIdFromMentionString(args.at(i)));
+        users.push(otherUser);
+    }
+
+    return users;
 }

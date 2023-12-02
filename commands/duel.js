@@ -1,5 +1,5 @@
 import { CommandHandler } from "../commandHandler.js";
-import { getIdFromMentionString } from "../discordUtils.js";
+import { getMultiplesUsersFromMessage } from "../discordUtils.js";
 import { createConnectedPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
@@ -10,15 +10,7 @@ const command = "duel";
 
 {
     CommandHandler.addTrigger("duel", async(msg) => {
-        const args  = msg.content.split(" ");
-
-        if(args.length < 3) return;
-
-        const otherUser = msg.mentions.users.find((user) => user.id === getIdFromMentionString(args.at(2)));
-
-        if(otherUser === undefined) return;
-
-        const users = [msg.author, otherUser];
+        const users = getMultiplesUsersFromMessage(msg, 1, 1);
 
         createConnectedPending(msg.channel.id, users, command);
     });
