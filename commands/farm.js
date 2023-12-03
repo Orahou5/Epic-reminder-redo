@@ -2,7 +2,7 @@ import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { cryCommand, defaultCommands } from "./commons/commands.js";
+import { cryCommand, customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess } from "./commons/process.js";
 
 const command = "farm";
@@ -14,25 +14,26 @@ const command = "farm";
 
     const toBeRegistered = [
         {
-            data: (user) => `${user.username}.{2} plants.*?seed`,
+            data: ["usernameStar", "plants", "seed"],
             preverif: "seed",
             location: "content",
             process: defaultProcess
         },
-        ...defaultCommands,
+        customizeCooldown("farmed already"),
         {
-            data: (user) => `${user.username}.{2} HITS THE FLOOR WITH THEIR FISTS`,
+            data: ["usernameStar", "hits the floor with their fists"],
             preverif: "hits",
             location: "content",
             process: defaultProcess
         },
         {
-            data: (user) => `${user.username}.{2} is about to plant another seed`,
+            data: ["usernameStar", "is about to plant another seed"],
             preverif: "seed",
             location: "content",
             process: defaultProcess
         },
         cryCommand,
+        epicJailCommand
     ];
 
     Process.addCommands(command, toBeRegistered)

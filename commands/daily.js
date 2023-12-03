@@ -2,7 +2,7 @@ import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { defaultCommands } from "./commons/commands.js";
+import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess } from "./commons/process.js";
 
 const command = "daily";
@@ -19,13 +19,14 @@ const command = "daily";
     });
 
     const toBeRegistered = [
-        ...defaultCommands,
         {
-            data: (user) => `${user.username} — daily`,
+            data: ["usernameDash", "daily"],
             preverif: "daily",
             location: "authorName",
             process: defaultProcess
-        }
+        },
+        customizeCooldown("daily rewards"),
+        epicJailCommand
     ];
 
     Process.addCommands(command, toBeRegistered)

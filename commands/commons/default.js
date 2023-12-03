@@ -6,6 +6,10 @@ function createDisplay(user, commandId, emoji, emoji2 = null) {
     return `${user.mention} It's time for ${emoji}**${commandId.toUpperCase()}**${emoji2 ?? emoji} *desu*`
 }
 
+export function checkUsername(msg, user) {
+    return msg?.[this.location]?.includes(`**${user.username}**`);
+}
+
 export function insertReminderRetry({soul, now, commandId, dTime, delay = 10 * 1000}) {
     console.log("inserting");
     showHoursMinutesSeconds(`inserting ${commandId}`);

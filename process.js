@@ -1,4 +1,5 @@
 import { filterPending } from "./pending.js";
+import { dirLog } from "./utils.js";
 
 export const Process = {
     commands: {},
@@ -50,6 +51,23 @@ export const Settings = {
     }
 }
 
+const resolveAlias = {
+    "usernameStar": (user) => `**${user.username}**`,
+    "usernameDash": (user) => `${user.username} —`,
+    "mention": (user) => user.mention,
+}
+
+function resolveMsg(msg, command, user) {
+    const string = msg[command.location].toLowerCase();
+    console.log(string)
+    return command.data.every((data) => {
+        return Array.isArray(data) ? 
+        data.some((d) => string.includes(d)) : 
+        string.includes(resolveAlias[data]?.(user) ?? data ); 
+    })
+    //return command.data.test(msg[command.location]) && command?.check?.(msg, user);
+}
+
 export function resolve(msg) {
     const now = Date.now();
 
@@ -59,10 +77,11 @@ export function resolve(msg) {
 
     object.pending.forEach((pending) => {
         const command = object.commands[pending.commandId].find((command) => {
-            return msg.regexResolve(command.data(pending.user), command.location);
+            return resolveMsg(msg, command, pending.user)
+            //return msg.regexResolve(command.data(pending.user), command.location);
         });
 
-        console.log("resolve", pending?.user?.username, pending.commandId, command?.data?.(pending.user));
+        console.log("resolve", pending?.user?.username, pending.commandId, command?.data);
 
         if(command === undefined) return;
 

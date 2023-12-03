@@ -2,7 +2,7 @@ import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { defaultCommands } from "./commons/commands.js";
+import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
 
 const command = "work";
@@ -25,36 +25,37 @@ const command = "work";
 
     const toBeRegistered = [
         {
-            data: (user) => `${user.username}.{2} got.*?(?:log|fish|apple|banana|ruby|coins)`,
+            data: ["usernameStar", "got", ["log", "ruby", "coins", "fish", "apple", "banana"]],
             preverif: "got",
             location: "content",
             process: defaultProcess
         },
-        ...defaultCommands,
         {
-            data: (user) => `${user.username}.{2} fights .{2}THE RUBY DRAGON`,
-            preverif: "got",
+            data: ["usernameStar", "fights **the ruby dragon**"],
+            preverif: "ruby dragon",
             location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: (user) => `${user.username}.{2} ran away`,
+            data: ["usernameStar", "ran away"],
             preverif: "ran",
             location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: (user) => `${user.username}.{2} sleeps.*?got 2`,
+            data: ["usernameStar", "sleeps", "got 2"],
             preverif: "sleeps",
             location: "content",
             process: defaultProcessWithMove
         },
         {
-            data: (user) => `${user.username}.{2} (?:cried|sleeps)`,
+            data: ["usernameStar", ["cried", "sleeps"]],
             preverif: "cried",
             location: "content",
             process: defaultProcess
-        }
+        },
+        customizeCooldown("got some resources"),
+        epicJailCommand,
     ];
 
     Process.addCommands(command, toBeRegistered)

@@ -1,7 +1,7 @@
 import { CommandHandler } from "../commandHandler.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
-import { defaultCommands, loseFight, winFight } from "./commons/commands.js";
+import { customizeCooldown, epicJailCommand, loseFight, winFight } from "./commons/commands.js";
 
 const command = "adventure";
 
@@ -12,8 +12,9 @@ const command = "adventure";
 
     const toBeRegistered = [
         winFight,
-        ...defaultCommands,
+        customizeCooldown("been on an adventure"),
         loseFight,
+        epicJailCommand
     ];
 
     Process.addCommands(command, toBeRegistered)

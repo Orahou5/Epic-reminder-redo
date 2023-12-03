@@ -3,7 +3,7 @@ import { getMultiplesUsersFromMessage } from "../discordUtils.js";
 import { createConnectedPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
-import { defaultCommands } from "./commons/commands.js";
+import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess, defaultProcessWithoutSave } from "./commons/process.js";
 
 const command = "duel";
@@ -25,18 +25,19 @@ const command = "duel";
 
     const toBeRegistered = [
         {
-            data: (user) => `${user.username}.*?boom`,
+            data: ["usernameStar", "boom"],
             preverif: "boom",
             location: "description",
             process: defaultProcess,
         },
-        ...defaultCommands,
+        customizeCooldown("duel recently"),
         {
-            data: (user) => `${user.username}.{4} Duel cancelled`,
+            data: ["usernameStar", "duel cancelled"],
             preverif: "cancelled",
             location: "content",
             process: defaultProcessWithoutSave,
         },
+        epicJailCommand
     ];
 
     Process.addCommands(command, toBeRegistered)

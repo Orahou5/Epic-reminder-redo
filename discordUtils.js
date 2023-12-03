@@ -25,8 +25,8 @@ export function extendsMessage(msg) {
                 default:
                     const multipleProp = prop.split("=")
                     if(multipleProp.length > 1) {
-                        return multipleProp.reduce((acc, curr) => {
-                            return `${acc}=${receiver[curr]}`;
+                        return multipleProp.reduceRight((acc, curr) => {
+                            return `${receiver[curr]} ${acc}`;
                         }, "");
                     }
                     return Reflect.get(target, prop);
