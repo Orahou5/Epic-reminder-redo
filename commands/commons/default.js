@@ -18,7 +18,7 @@ export function insertReminderRetry({soul, now, commandId, dTime, delay = 10 * 1
 
     insertReminder({
         discord_id: soul.user.id,
-        command_id: commandId,
+        command_id: settings?.command ?? commandId,
         dTime: dTime ?? settings.dTime,
         time: now,
         enabled: true,
