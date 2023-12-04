@@ -68,7 +68,7 @@ class Timeloop {
 }
 
 function loopContent() {
-    getReminders(30 * 1000).then((reminders) => {
+    getReminders(40 * 1000).then((reminders) => {
         Timeloop.addScenarios(reminders)
     });
 }
@@ -79,6 +79,6 @@ function pendingInterval(){
 
 export function startTimeloop() {
     loopContent();
-    setInterval(loopContent, convertToMilliseconds({seconds: 40}));
+    setInterval(loopContent, convertToMilliseconds({seconds: 30}));
     setInterval(pendingInterval, convertToMilliseconds({minutes: 5}));
 }
