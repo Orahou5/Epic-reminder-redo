@@ -95,15 +95,13 @@ const trainingUtility = {
 }
 
 function ruleForest(msg, user) {
-    const matchAll = [...msg.content.matchAll(/:([^:]+):/gi)];
+    const splited = msg.content.split(":").slice(1);
 
-    if(matchAll === null || matchAll?.length < 6) return;
+    const comparator = splited.at(-2);
 
-    const comparator = matchAll.pop();
-
-    const number = matchAll.reduce((acc, current) => {
-        return acc + (current[1] === comparator[1] ? 1 : 0);
-    }, 0);
+    const number = splited.reduce((acc, current) => {
+        return acc + (current === comparator ? 1 : 0);
+    }, 0) - 1;
 
     const fn = (str) => {
         const bool = str === `${number}`;
