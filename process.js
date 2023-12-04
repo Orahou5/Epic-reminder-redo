@@ -1,5 +1,4 @@
 import { filterPending } from "./pending.js";
-import { dirLog } from "./utils.js";
 
 export const Process = {
     commands: {},

@@ -2,6 +2,7 @@ import { CommandHandler } from "../commandHandler.js";
 import { getMultiplesUsersFromMessage } from "../discordUtils.js";
 import { createConnectedPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
+import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess, defaultProcessWithoutSave } from "./commons/process.js";
@@ -35,7 +36,7 @@ const command = "duel";
             data: ["usernameStar", "duel cancelled"],
             preverif: "cancelled",
             location: "content",
-            process: defaultProcessWithoutSave,
+            process: stopStory
         },
         epicJailCommand
     ];

@@ -3,7 +3,7 @@ import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
 import { cryCommand, customizeCooldown, epicJailCommand, loseFight, winFight } from "./commons/commands.js";
-import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
+import { defaultProcess, processWithMove } from "./commons/process.js";
 
 const command = "hunt";
 
@@ -45,7 +45,7 @@ const command = "hunt";
             data: ["usernameStar", "pretends"],
             preverif: "pretends",
             location: "content",
-            process: defaultProcessWithMove
+            process: processWithMove
         },
         loseFight,
         cryCommand,

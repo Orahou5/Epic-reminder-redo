@@ -82,6 +82,7 @@ export function deleteExpired() {
     Object.entries(symlink).forEach(([key, value]) => {
         if (value.disabled_at <= now) {
             const [userId, commandId] = key.split("-");
+            console.log("deleting expired", userId, commandId);
             this.removeFromPending(userId, commandId);
         }
     });

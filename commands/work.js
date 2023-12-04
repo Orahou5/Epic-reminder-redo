@@ -3,7 +3,7 @@ import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess, defaultProcessWithMove } from "./commons/process.js";
+import { defaultProcess, processWithMove } from "./commons/process.js";
 
 const command = "work";
 
@@ -34,19 +34,19 @@ const command = "work";
             data: ["usernameStar", "fights **the ruby dragon**"],
             preverif: "ruby dragon",
             location: "content",
-            process: defaultProcessWithMove
+            process: processWithMove
         },
         {
             data: ["usernameStar", "ran away"],
             preverif: "ran",
             location: "content",
-            process: defaultProcessWithMove
+            process: processWithMove
         },
         {
             data: ["usernameStar", "sleeps", "got 2"],
             preverif: "sleeps",
             location: "content",
-            process: defaultProcessWithMove
+            process: processWithMove
         },
         {
             data: ["usernameStar", ["cried", "sleeps"]],
