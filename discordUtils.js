@@ -1,3 +1,5 @@
+import { ButtonStyles, ComponentTypes } from "oceanic.js";
+
 export function extendsMessage(msg) {
     const handler = {
         get(target, prop, receiver) {
@@ -35,6 +37,71 @@ export function extendsMessage(msg) {
     }
 
     return new Proxy(msg, handler);
+}
+
+export function createComponentRow(components) {
+    return {
+        type: ComponentTypes.ACTION_ROW,
+        components
+    }
+}
+
+export function buttonYes(activated = true, disabled = true){
+    return {
+        // https://docs.oceanic.ws/latest/interfaces/Types_Channels.TextButton.html
+        type: ComponentTypes.BUTTON,
+        style: (activated ? ButtonStyles.SUCCESS : ButtonStyles.SECONDARY), // The style of button - full list: https://docs.oceanic.ws/latest/enums/Constants.ButtonStyles.html
+        customID: "yes",
+        label: "yes",
+        disabled, // If the button is disabled, false by default.
+    }
+}
+
+export function buttonNo(activated = true, disabled = true){
+    return {
+        // https://docs.oceanic.ws/latest/interfaces/Types_Channels.TextButton.html
+        type: ComponentTypes.BUTTON,
+        style: (activated ? ButtonStyles.DANGER : ButtonStyles.SECONDARY), // The style of button - full list: https://docs.oceanic.ws/latest/enums/Constants.ButtonStyles.html
+        customID: "no",
+        label: "no",
+        disabled, // If the button is disabled, false by default.
+    }
+}
+
+export function buttonString(string, activated = true, disabled = true){
+    return {
+        // https://docs.oceanic.ws/latest/interfaces/Types_Channels.TextButton.html
+        type: ComponentTypes.BUTTON,
+        style: (activated ? ButtonStyles.SUCCESS : ButtonStyles.SECONDARY), // The style of button - full list: https://docs.oceanic.ws/latest/enums/Constants.ButtonStyles.html
+        customID: string,
+        label: string,
+        disabled, // If the button is disabled, false by default.
+    }
+}
+
+export function buttonEmoji(emoji, activated = true, disabled = true){
+    console.log(emoji);
+    return {
+        // https://docs.oceanic.ws/latest/interfaces/Types_Channels.TextButton.html
+        type: ComponentTypes.BUTTON,
+        style: (activated ? ButtonStyles.SUCCESS : ButtonStyles.SECONDARY), // The style of button - full list: https://docs.oceanic.ws/latest/enums/Constants.ButtonStyles.html
+        customID: emoji.name,
+        emoji,
+        disabled, // If the button is disabled, false by default.
+    }
+}
+
+export function buttonStringEmoji(string, emoji, id, activated = true, disabled = true){
+    return {
+        // https://docs.oceanic.ws/latest/interfaces/Types_Channels.TextButton.html
+        type: ComponentTypes.BUTTON,
+        style: (activated ? ButtonStyles.SUCCESS : ButtonStyles.SECONDARY), // The style of button - full list: https://docs.oceanic.ws/latest/enums/Constants.ButtonStyles.html
+        customID: id,
+        label: string,
+        emoji,
+        disabled, // If the button is disabled, false by default.
+    }
+
 }
 
 export function send(channel, content) {
