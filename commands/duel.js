@@ -5,13 +5,17 @@ import { Process, Settings } from "../process.js";
 import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess, defaultProcessWithoutSave } from "./commons/process.js";
+import { defaultProcess } from "./commons/process.js";
 
 const command = "duel";
 
 {
     CommandHandler.addTrigger("duel", async(msg) => {
-        const users = getMultiplesUsersFromMessage(msg, 1, 1);
+        const users = getMultiplesUsersFromMessage({
+            msg,
+            start: 2,
+            max: 1
+        });
 
         if(users === undefined) return;
 
