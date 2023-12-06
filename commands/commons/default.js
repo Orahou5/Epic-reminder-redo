@@ -12,11 +12,13 @@ export function checkUsername(msg, user) {
     return msg?.[this.location]?.includes(`**${user.username}**`);
 }
 
-export function insertReminderRetry({soul, now, commandId, display = null, dTime = null, delay = 10 * 1000}) {
+export function insertReminderRetry({soul, now, commandId, display = null, dTime = null, isFixed = null, delay = 10 * 1000}) {
     console.log("inserting");
     showHoursMinutesSeconds(`inserting ${commandId}`);
 
     const settings = Settings.get(commandId);
+
+    const displayFn = display ?? createDisplay(commandId, settings.emoji, settings.emoji2)
 
     insertReminder({
         discord_id: soul.user.id,
@@ -25,8 +27,8 @@ export function insertReminderRetry({soul, now, commandId, display = null, dTime
         time: now,
         enabled: true,
         channel_id: soul.m.channel.id,
-        message: display ?? createDisplay(commandId, settings.emoji, settings.emoji2) (soul.user),
-        fixed_cd: settings.fixed_cd
+        message: displayFn(soul.user),
+        fixed_cd: isFixed ?? settings.fixed_cd
     }).then(() => {
         console.log("inserted");
     }).catch((err) => { 

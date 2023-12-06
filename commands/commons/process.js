@@ -3,13 +3,8 @@ import { ruleMove, rulePetHelper, stopStory } from "../../rule.js";
 import { getCooldownFromMsg } from "../../utils.js";
 import { insertReminderRetry } from "./default.js";
 
-export function defaultProcess(soul, commandId, now = Date.now()) {
-    stopStory(soul, commandId);
-    insertReminderRetry({soul, now, commandId});
-}
-
 export function processTrainingPetHelper(soul, commandId, now = Date.now()) {
-    defaultProcess(soul, commandId, now);
+    defaultProcess(soul, commandId, now)
 
     createPending(soul.m.channel.id, soul.user, "pethelper");
 }
@@ -20,14 +15,18 @@ export function processPetHelper(soul, commandId) {
     rulePetHelper(soul);
 }
 
-export function processWithCustomTime(soul, commandId, now = Date.now()) {
+export function defaultProcess(soul, commandId, now = Date.now(), args = {}) {
     stopStory(soul, commandId);
 
-    console.log("custom time", this);
+    insertReminderRetry({soul, now, commandId, ...args});
+}
 
-    const dTime = getCooldownFromMsg(soul.m, this.location);
+export function processCustom(args) {
+    return function(soul, commandId, now = Date.now()) {
+        const dTime = args.retrieveDTime === true ? getCooldownFromMsg(soul.m, this.location) : args?.dTime;
 
-    insertReminderRetry({soul, now, commandId, dTime});
+        defaultProcess(soul, commandId, now, {dTime, isFixed: args?.isFixed, display: args?.display});
+    }
 }
 
 export function processWithMove(soul, commandId, now = Date.now()) {

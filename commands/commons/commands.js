@@ -1,5 +1,6 @@
 import { stopStory } from "../../rule.js"
-import { defaultProcess, processWithCustomTime } from "./process.js"
+import { createDisplay } from "./default.js"
+import { defaultProcess, processCustom } from "./process.js"
 
 export const cryCommand = {
     data: ["usernameStar", "cried"],
@@ -13,7 +14,7 @@ export function customizeCooldown(regString, preverif = null) {
         data: ["usernameDash", "cooldown", regString],
         preverif: preverif ?? regString,
         location: "authorName=title",
-        process: processWithCustomTime,
+        process: processCustom({retrieveDTime: true}),
     }
 }
 
@@ -37,4 +38,24 @@ export const loseFight = {
     location: "content",
     process: defaultProcess,
 
+}
+
+export function createEvent(eventKey) {
+    return {
+        data: ["usernameStar", "successfully registered", `${eventKey}`],
+        preverif: `${eventKey}`,
+        location: "content",
+        process(soul, commandId, now = Date.now()) {
+            defaultProcess(soul, commandId, now);
+
+            processCustom({retrieveDTime: true})(soul, eventKey, now);
+        }
+    }
+}
+
+export const eventNotJoin = {
+    data: ["mention", "you are already registered"],
+    preverif: "registered",
+    location: "content",
+    process: stopStory,
 }

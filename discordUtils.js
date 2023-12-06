@@ -28,7 +28,7 @@ export function extendsMessage(msg) {
                     const multipleProp = prop.split("=")
                     if(multipleProp.length > 1) {
                         return multipleProp.reduceRight((acc, curr) => {
-                            return `${receiver[curr]} ${acc}`;
+                            return `${receiver[curr]}\n${acc}`;
                         }, "");
                     }
                     return Reflect.get(target, prop);
@@ -129,6 +129,7 @@ export function getMultiplesUsersFromMessage({msg, start = 2, min = 1, max = 10}
 
     for(let i = start; i < start + max && i < args.length; i++) {
         const otherUser = msg.mentions.users.find((user) => user.id === getIdFromMentionString(args.at(i)));
+        if(otherUser === undefined) continue;
         users.push(otherUser);
     }
 

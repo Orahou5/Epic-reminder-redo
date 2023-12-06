@@ -11,7 +11,7 @@ export function escape(string){
 }
 
 export function getCooldownFromMsg(msg, location) {
-    const match = msg[location].match(/[^*]+\*\*([^\*]+)/si)?.[1];
+    const match = msg[location].match(/[^\n]+[^\*]+\*\*([^\*]+)/si)?.[1];
     if(match === undefined) return;
     const exchange = {
         s: "seconds",
