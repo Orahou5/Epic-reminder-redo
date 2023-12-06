@@ -7,3 +7,4 @@ import "./commands/daily.js";
 import "./commands/weekly.js";
 import "./commands/training.js";
 import "./commands/horse.js";
+import "./commands/lootbox.js";
