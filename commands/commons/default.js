@@ -12,6 +12,19 @@ export function checkUsername(msg, user) {
     return msg?.[this.location]?.includes(`**${user.username}**`);
 }
 
+export function getRoleStartingWith(member, prefix) {
+    return member.client.guilds.get(member.guildID).roles.find(role => member.roles.includes(role.id) && role.name.includes(prefix));
+    
+}
+
+export function createDisplayGuild(command, interactionCommand, emoji, emoji2 = null){
+    return function(user) {
+        const pingable = getRoleStartingWith(user, "EGuild") ?? user;
+        return `${pingable.mention} Hey, Hey, ${emoji}**${command.toUpperCase()}**${emoji2 ?? emoji} is ready again! *desu* You can do it with ${interactionCommand}!`
+    }
+}
+
+
 export function insertReminderRetry({soul, now, commandId, display = null, dTime = null, isFixed = null, delay = 10 * 1000}) {
     console.log("inserting");
     showHoursMinutesSeconds(`inserting ${commandId}`);

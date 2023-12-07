@@ -7,6 +7,7 @@ import "./imported.js";
 import { resolve } from "./process.js";
 import { startTimeloop } from "./synchronizer.js";
 import { extendsMessage } from "./discordUtils.js";
+import { dirLogCut, dirLogMini } from "./utils.js";
 
 export const client = new Client({ 
     auth: `Bot ${process.env.DISCORD_TOKEN_ERPG}`,
@@ -26,7 +27,7 @@ client.once("ready", async() => {
 client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
-    //console.log("MsgEmbeds", msg.embeds[0]);
+    //console.log("memberRole", msg.member.roles);
 
     if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

@@ -11,3 +11,4 @@ import "./commands/lootbox.js";
 import "./commands/quest.js";
 import "./commands/dungeon.js";
 import "./commands/arena.js";
+import "./commands/guild.js";
