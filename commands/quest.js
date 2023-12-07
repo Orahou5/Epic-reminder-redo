@@ -10,16 +10,13 @@ import { defaultProcess, processCustom, processWithCustomDisplay } from "./commo
 const command = "quest";
 
 {
-    CommandHandler.addTrigger("quest", async(msg) => {
+    CommandHandler.addMultiplesTriggers(["quest", "epic"], async(msg) => {
         const args = msg.content.toLowerCase().split(" ");
 
-        if(args.at(2) !== "cancel") createPending(msg.channel.id, msg.author, command);
-    });
+        const bool = args.at(1) === "quest" && args.at(2) !== "cancel";
+        const bool2 = args.at(1) === "epic" && args.at(2) === "quest";
 
-    CommandHandler.addTrigger("epic", async(msg) => {
-        const args = msg.content.toLowerCase().split(" ");
-
-        if(args.at(2) === "quest") createPending(msg.channel.id, msg.author, command);
+        if(bool || bool2) createPending(msg.channel.id, msg.author, command);
     });
     
     Settings.add(command, {

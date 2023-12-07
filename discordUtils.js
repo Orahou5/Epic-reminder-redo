@@ -125,7 +125,7 @@ export function getMultiplesUsersFromMessage({msg, start = 2, min = 1, max = 10}
 
     if(args.length < start + min) return;
 
-    const users = [msg.author];
+    const users = [];
 
     for(let i = start; i < start + max && i < args.length; i++) {
         const otherUser = msg.mentions.users.find((user) => user.id === getIdFromMentionString(args.at(i)));

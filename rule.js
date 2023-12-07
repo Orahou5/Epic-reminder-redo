@@ -6,6 +6,10 @@ export function stopStory(soul, commandId) {
     findPending(soul.user, commandId)?.removeFromPending();
 }
 
+export function getUsers(soul, commandId) {
+    return findPending(soul.user, commandId)?.getUsers() ?? [];
+}
+
 export function ruleMove(soul) {
     send(soul.m.channel, `${soul.user}, Don't forget to switch back to your original area. *desu*`);
 }

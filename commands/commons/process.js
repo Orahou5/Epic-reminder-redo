@@ -1,5 +1,5 @@
 import { createPending } from "../../pending.js";
-import { ruleMove, rulePetHelper, stopStory } from "../../rule.js";
+import { getUsers, ruleMove, rulePetHelper, stopStory } from "../../rule.js";
 import { getCooldownFromMsg } from "../../utils.js";
 import { insertReminderRetry } from "./default.js";
 
@@ -19,6 +19,21 @@ export function defaultProcess(soul, commandId, now = Date.now(), args = {}) {
     stopStory(soul, commandId);
 
     insertReminderRetry({soul, now, commandId, ...args});
+}
+
+export function connectedProcessWithArgs(args) {
+    return function(soul, commandId, now = Date.now()) {
+        return connectedProcess(soul, commandId, now, args);
+    }
+}
+
+export function connectedProcess(soul, commandId, now = Date.now(), args = {}) {
+    const users = getUsers(soul, commandId)
+    stopStory(soul, commandId);
+
+    [soul.user, ...users].forEach((user) => {
+        insertReminderRetry({soul: {user, m: soul.m}, now, commandId, ...args});
+    });
 }
 
 export function processCustom(args) {

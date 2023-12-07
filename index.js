@@ -26,7 +26,7 @@ client.once("ready", async() => {
 client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
-    console.log("MsgEmbeds", msg.embeds[0]);
+    //console.log("MsgEmbeds", msg.embeds[0]);
 
     if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

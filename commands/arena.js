@@ -4,7 +4,7 @@ import { createConnectedPending, createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
 import { createEvent, createEventNotJoin, customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { connectedProcess, defaultProcess } from "./commons/process.js";
 
 const command = "arena";
 
@@ -19,7 +19,7 @@ const command = "arena";
 
         if(users === undefined) return;
 
-        createConnectedPending(msg.channel.id, users, command);
+        createConnectedPending(msg.channel.id, msg.author, command, users);
     });
 
     CommandHandler.addTrigger("big", async(msg) => {
@@ -33,7 +33,7 @@ const command = "arena";
     Settings.add(command, {
         dTime: convertToMilliseconds({hours: 24}),
         fixed_cd: true,
-        emoji: "<:fire_sacrifice:1148177713086083112>",
+        emoji: ":stadium:",
     });
 
     Settings.add("big arena", {
@@ -48,7 +48,7 @@ const command = "arena";
             data: ["username", ":arenacookie:", "**reward**"],
             preverif: "reward",
             location: "field1Value",
-            process: defaultProcess
+            process: connectedProcess,
         },
         customizeCooldown("started an arena recently"),
         createEvent("big arena"),

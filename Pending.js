@@ -3,8 +3,9 @@ import { Process } from "./process.js";
 const pending = {};
 const symlink = {};
 
-class Pending {
+export class Pending {
     constructor(user, commandId) {
+        console.log("createpending");
         this.user = user;
         this.commandId = commandId;
     }
@@ -42,13 +43,16 @@ class Pending {
     }
 }
 
-export function createPending(channelId, user, commandId) {
-    console.log("createpending");
+export class PendingConnected extends Pending {
+    constructor(user, commandId, users) {
+        console.log("createconnectedpending");
+        super(user, commandId);
+        this.users = users;
+    }
 
-    const pending = new Pending(user, commandId);
-    pending.addToPending(channelId);
-
-    return pending;
+    getUsers() {
+        return this.users;
+    }
 }
 
 export function findPending(user, commandId) {
@@ -88,33 +92,16 @@ export function deleteExpired() {
     });
 }
 
-export function createConnectedPending(channelId, users, commandId) {
-    console.log("createconnectedpending");
+function createPendingCustom(connected) {
+    return function(channelId, user, commandId, users = []) {
+        console.log("createpending");
 
-    const pendingProxy = new Proxy(Pending.prototype.removeFromPending, {
-        apply: function(target, thisArg, args) {
-            console.log(`Removing pending for user ${thisArg.user.id}`);
+        const pending = connected ? new PendingConnected(user, commandId, users) : new Pending(user, commandId);
+        pending.addToPending(channelId);
 
-            if(!thisArg.hasPending()) return;
-
-            target.apply(thisArg, args);
-
-            users.forEach(user => {
-                if(user.id === thisArg.user.id) return;
-
-                const pendingTemp = findPending(user, commandId);
-                
-                if(pendingTemp === undefined) return;
-
-                pendingTemp.removeFromPending();
-            });
-
-            return true;
-        }
-    });
-
-    users.forEach(user => {
-        const pendingUser = createPending(channelId, user, commandId);
-        pendingUser.removeFromPending = pendingProxy;
-    });
+        return pending;
+    }
 }
+
+export const createPending = createPendingCustom(false);
+export const createConnectedPending = createPendingCustom(true);

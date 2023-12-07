@@ -4,7 +4,8 @@ import { createConnectedPending, createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
 import { createEvent, createEventNotJoin, customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { createDisplay } from "./commons/default.js";
+import { connectedProcess, connectedProcessWithArgs, defaultProcess } from "./commons/process.js";
 
 const command = "dungeon";
 
@@ -19,7 +20,7 @@ const command = "dungeon";
 
         if(users === undefined) return;
 
-        createConnectedPending(msg.channel.id, users, command);
+        createConnectedPending(msg.channel.id, msg.author, command, users);
     });
 
     CommandHandler.addTrigger("minintboss", async(msg) => {
@@ -43,7 +44,7 @@ const command = "dungeon";
             data: ["usernameDash", "miniboss", "defeated"],
             preverif: "miniboss",
             location: "authorName=title",
-            process: defaultProcess
+            process: connectedProcessWithArgs({display: createDisplay("miniboss", "<:fire_sacrifice:1148177713086083112>")}),
         },
         customizeCooldown("fight with a boss recently"),
         createEvent("minin'tboss"),

@@ -6,7 +6,7 @@ import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { processWithCustomDisplay } from "./commons/process.js";
+import { connectedProcessWithArgs, processCustom } from "./commons/process.js";
 
 const command = "horse";
 
@@ -25,7 +25,7 @@ const command = "horse";
 
             if(users === undefined) return;
     
-            createConnectedPending(msg.channel.id, users, command);
+            createConnectedPending(msg.channel.id, msg.author, command, users);
         }
     });
     
@@ -37,17 +37,17 @@ const command = "horse";
 
     const toBeRegistered = [
         {
-            data: ["usernameStar", "got a tier"],
+            data: ["usernameDash", "horse breeding", "got a tier"],
             preverif: "tier",
-            location: "description",
-            process: processWithCustomDisplay(createDisplay("horse breed", ":magnet:"))
+            location: "authorName=description",
+            process: connectedProcessWithArgs({display: createDisplay("horse breed", ":magnet:")}),
         },
         customizeCooldown("this command"),
         {
             data: ["usernameStar", "horse race"],
             preverif: "race",
             location: "content",
-            process: processWithCustomDisplay(createDisplay("horse race", ":magnet:"))
+            process: processCustom({display: createDisplay("horse race", ":magnet:")})
         },
         {
             data: ["mention", "horse breeding cancelled"],

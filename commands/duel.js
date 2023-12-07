@@ -5,7 +5,7 @@ import { Process, Settings } from "../process.js";
 import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { connectedProcess, defaultProcess } from "./commons/process.js";
 
 const command = "duel";
 
@@ -19,7 +19,7 @@ const command = "duel";
 
         if(users === undefined) return;
 
-        createConnectedPending(msg.channel.id, users, command);
+        createConnectedPending(msg.channel.id, msg.author, command, users);
     });
     
     Settings.add(command, {
@@ -30,10 +30,10 @@ const command = "duel";
 
     const toBeRegistered = [
         {
-            data: ["usernameStar", "boom"],
+            data: ["usernameDash", "duel", "boom"],
             preverif: "boom",
-            location: "description",
-            process: defaultProcess,
+            location: "authorName=description",
+            process: connectedProcess,
         },
         customizeCooldown("duel recently"),
         {
