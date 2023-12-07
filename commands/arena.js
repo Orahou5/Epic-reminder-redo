@@ -6,10 +6,10 @@ import { convertToMilliseconds } from "../utils.js";
 import { createEvent, createEventNotJoin, customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { defaultProcess } from "./commons/process.js";
 
-const command = "dungeon";
+const command = "arena";
 
 {
-    CommandHandler.addTrigger("miniboss", async(msg) => {
+    CommandHandler.addTrigger("arena", async(msg) => {
         const users = getMultiplesUsersFromMessage({
             msg,
             start: 2,
@@ -22,32 +22,37 @@ const command = "dungeon";
         createConnectedPending(msg.channel.id, users, command);
     });
 
-    CommandHandler.addTrigger("minintboss", async(msg) => {
+    CommandHandler.addTrigger("big", async(msg) => {
+        const args = msg.content.split(" ");
+
+        if(args.at(2) !== "arena") return;
+
         createPending(msg.channel.id, msg.author, command);
     });
     
     Settings.add(command, {
-        dTime: convertToMilliseconds({hours: 12}),
+        dTime: convertToMilliseconds({hours: 24}),
         fixed_cd: true,
         emoji: "<:fire_sacrifice:1148177713086083112>",
     });
 
-    Settings.add("minin'tboss", {
+    Settings.add("big arena", {
         dTime: convertToMilliseconds({days: 4}),
         fixed_cd: true,
-        emoji: "<:red_deer:940354118541774879>",
+        emoji: "<:sword_right:985477769624420353>",
+        emoji2: "<:sword_left:985477768672325652>"
     });
 
     const toBeRegistered = [
         {
-            data: ["usernameDash", "miniboss", "defeated"],
-            preverif: "miniboss",
-            location: "authorName=title",
+            data: ["username", ":arenacookie:", "**reward**"],
+            preverif: "reward",
+            location: "field1Value",
             process: defaultProcess
         },
-        customizeCooldown("fight with a boss recently"),
-        createEvent("minin'tboss"),
-        createEventNotJoin("minin'tboss"),
+        customizeCooldown("started an arena recently"),
+        createEvent("big arena"),
+        createEventNotJoin("big arena"),
         epicJailCommand
     ];
 

@@ -51,6 +51,7 @@ export const Settings = {
 }
 
 const resolveAlias = {
+    "username": (user) => `${user.username}`,
     "usernameStar": (user) => `**${user.username}**`,
     "usernameDash": (user) => `${user.username} —`,
     "mention": (user) => user.mention,

@@ -48,14 +48,18 @@ export function createEvent(eventKey) {
         process(soul, commandId, now = Date.now()) {
             defaultProcess(soul, commandId, now);
 
-            processCustom({retrieveDTime: true})(soul, eventKey, now);
+            processCustom({retrieveDTime: true}).call(this, soul, eventKey, now);
         }
     }
 }
 
-export const eventNotJoin = {
-    data: ["mention", "you are already registered"],
-    preverif: "registered",
-    location: "content",
-    process: stopStory,
+export function createEventNotJoin(eventKey) {
+    return {
+        data: ["mention", "you are already registered"],
+        preverif: `registered`,
+        location: "content",
+        process(soul, commandId, now = Date.now()) {
+            processCustom({retrieveDTime: true}).call(this, soul, eventKey, now);
+        }
+    }
 }
