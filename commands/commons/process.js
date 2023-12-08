@@ -45,6 +45,7 @@ const saveMultiple = save(true);
 function customizeProcess(steps = []) {
     return function(args) {
         return function(soul, commandId, now = Date.now()) {
+            console.log("processing steps", commandId);
             const dTime = args?.retrieveDTime === true ? getCooldownFromMsg(soul.m, this.location) : args?.dTime;
     
             steps.forEach((step) => {
@@ -83,6 +84,6 @@ export function processGuild(args) {
                     isFixed: true
                 })
             ],
-        ).call(this, soul, commandId, now, args);
+        )().call(this, soul, commandId, now, args);
     }
 }
