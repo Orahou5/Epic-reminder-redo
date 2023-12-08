@@ -1,9 +1,13 @@
-import { buttonEmoji, buttonNo, buttonString, buttonStringEmoji, buttonYes, createComponentRow, send } from "./discordUtils.js";
-import { findPending } from "./pending.js";
+import { buttonNo, buttonString, buttonStringEmoji, buttonYes, createComponentRow, send } from "./discordUtils.js";
+import { createPending, findPending } from "./pending.js";
 
 export function stopStory(soul, commandId) {
     console.log("stoppending")
     findPending(soul.user, commandId)?.removeFromPending();
+}
+
+export function createPetHelper(soul) {
+    createPending(soul.m.channel.id, soul.user, "pethelper");
 }
 
 export function getUsers(soul, commandId) {

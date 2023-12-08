@@ -5,7 +5,7 @@ import { ruleSendTraining } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { defaultProcess, processPetHelper, processTrainingPetHelper, processWithCustomDisplay } from "./commons/process.js";
+import { defaultProcess, processCustom, processPetHelper, processTrainingPetHelper } from "./commons/process.js";
 
 const command = "training";
 
@@ -30,7 +30,7 @@ const command = "training";
             data: ["usernameStar", "epic npc", "well done"],
             preverif: "well done",
             location: "description",
-            process: processWithCustomDisplay(createDisplay("ultraining", "<:cyclo:940363035296555019>"))
+            process: processCustom({display: createDisplay("ultraining", "<:cyclo:940363035296555019>")})
         },
         {
             data: ["usernameStar", "is training"],

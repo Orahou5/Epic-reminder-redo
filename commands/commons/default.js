@@ -19,13 +19,11 @@ export function getRoleStartingWith(member, prefix) {
 
 export function createDisplayGuild(command, interactionCommand, emoji, emoji2 = null){
     return function(user) {
-        const pingable = getRoleStartingWith(user, "EGuild") ?? user;
-        return `${pingable.mention} Hey, Hey, ${emoji}**${command.toUpperCase()}**${emoji2 ?? emoji} is ready again! *desu* You can do it with ${interactionCommand}!`
+        return `${user.mention} Hey, Hey, ${emoji}**${command.toUpperCase()}**${emoji2 ?? emoji} is ready again! *desu* You can do it with ${interactionCommand}!`
     }
 }
 
-
-export function insertReminderRetry({soul, now, commandId, display = null, dTime = null, isFixed = null, delay = 10 * 1000}) {
+export function insertReminderRetry({user, msg, now, commandId, display = null, dTime = null, isFixed = null, delay = 10 * 1000}) {
     console.log("inserting");
     showHoursMinutesSeconds(`inserting ${commandId}`);
 
@@ -34,13 +32,13 @@ export function insertReminderRetry({soul, now, commandId, display = null, dTime
     const displayFn = display ?? createDisplay(commandId, settings.emoji, settings.emoji2)
 
     insertReminder({
-        discord_id: soul.user.id,
+        discord_id: user.id,
         command_id: commandId,
         dTime: dTime ?? settings.dTime,
         time: now,
         enabled: true,
-        channel_id: soul.m.channel.id,
-        message: displayFn(soul.user),
+        channel_id: msg.channel.id,
+        message: displayFn(user),
         fixed_cd: isFixed ?? settings.fixed_cd
     }).then(() => {
         console.log("inserted");
@@ -48,7 +46,7 @@ export function insertReminderRetry({soul, now, commandId, display = null, dTime
         console.log(err);
 
         setTimeout(() => {
-            insertReminderRetry(reminder);
+            insertReminderRetry({user, msg, now, commandId, display, dTime, isFixed, delay});
         }, delay);
     });
 }

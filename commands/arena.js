@@ -4,7 +4,7 @@ import { createConnectedPending, createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
 import { createEvent, createEventNotJoin, customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { connectedProcess, defaultProcess } from "./commons/process.js";
+import { processConnected } from "./commons/process.js";
 
 const command = "arena";
 
@@ -48,7 +48,7 @@ const command = "arena";
             data: ["username", ":arenacookie:", "**reward**"],
             preverif: "reward",
             location: "field1Value",
-            process: connectedProcess,
+            process: processConnected()
         },
         customizeCooldown("started an arena recently"),
         createEvent("big arena"),

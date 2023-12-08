@@ -1,5 +1,4 @@
 import { stopStory } from "../../rule.js"
-import { createDisplay } from "./default.js"
 import { defaultProcess, processCustom } from "./process.js"
 
 export const cryCommand = {

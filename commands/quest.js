@@ -5,7 +5,7 @@ import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { defaultProcess, processCustom, processWithCustomDisplay } from "./commons/process.js";
+import { defaultProcess, processCustom } from "./commons/process.js";
 
 const command = "quest";
 
@@ -42,7 +42,7 @@ const command = "quest";
             data: ["usernameDash", "epic quest", ["rewards", "better luck next time"]],
             preverif: "epic quest",
             location: "authorName=field0Name",
-            process: processWithCustomDisplay(createDisplay("epic quest", ":horse_racing:"))
+            process: processCustom({display: createDisplay("epic quest", ":horse_racing:")})
         },
         customizeCooldown("claimed a quest"),
         {

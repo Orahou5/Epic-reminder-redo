@@ -18,8 +18,6 @@ const command = "hunt";
         emoji: "<:sword_dragon:805446534673596436>"
     });
 
-
-
     const toBeRegistered = [
         winFight,
         customizeCooldown("looked around"),

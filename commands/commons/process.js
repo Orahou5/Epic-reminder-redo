@@ -1,31 +1,6 @@
-import { createPending } from "../../pending.js";
-import { getUsers, ruleMove, rulePetHelper, stopStory } from "../../rule.js";
+import { createPetHelper, getUsers, ruleMove, rulePetHelper, stopStory } from "../../rule.js";
 import { getCooldownFromMsg } from "../../utils.js";
-import { createDisplayGuild, getRoleStartingWith, insertReminderRetry } from "./default.js";
-
-export function processTrainingPetHelper(soul, commandId, now = Date.now()) {
-    defaultProcess(soul, commandId, now)
-
-    createPending(soul.m.channel.id, soul.user, "pethelper");
-}
-
-export function processPetHelper(soul, commandId) {
-    stopStory(soul, commandId);
-
-    rulePetHelper(soul);
-}
-
-export function defaultProcess(soul, commandId, now = Date.now(), args = {}) {
-    stopStory(soul, commandId);
-
-    insertReminderRetry({soul, now, commandId, ...args});
-}
-
-export function connectedProcessWithArgs(args) {
-    return function(soul, commandId, now = Date.now()) {
-        return connectedProcess(soul, commandId, now, args);
-    }
-}
+import { getRoleStartingWith, insertReminderRetry } from "./default.js";
 
 function getMillisecondsUntilNextSaturday() {
     const now = Date.now();
@@ -47,52 +22,67 @@ function getMillisecondsUntilNextSaturday() {
     return millisecondsUntilSaturday;
 }
 
+function save(multiple = false) {
+    return function(argsUp = {}) {
+        return function (soul, commandId, now = Date.now(), args = {}) {
+            let users = [];
+            if(multiple === true) {
+                users = getUsers(soul, commandId);
+            }
+
+            [soul.user, ...users].forEach((user) => {
+                insertReminderRetry({user, msg: soul.m, now, commandId, ...args, ...argsUp});
+            });
+
+            stopStory(soul, commandId);
+        }
+    }
+}
+
+const saveOne = save();
+const saveMultiple = save(true);
+
+function customizeProcess(steps = []) {
+    return function(args) {
+        return function(soul, commandId, now = Date.now()) {
+            const dTime = args?.retrieveDTime === true ? getCooldownFromMsg(soul.m, this.location) : args?.dTime;
+    
+            steps.forEach((step) => {
+                step(soul, commandId, now, {...args, ...{dTime}});
+            });
+        }
+    }
+}
+
+export const processWithMove = customizeProcess([ruleMove, saveOne()])();
+
+export const processCustom = customizeProcess([saveOne()]);
+
+export const defaultProcess = processCustom();
+
+export const processPetHelper = customizeProcess([stopStory, rulePetHelper])();
+
+export const processTrainingPetHelper = customizeProcess([createPetHelper, saveOne()])();
+
+export const processConnected = customizeProcess([saveMultiple()]);
+
 export function processGuild(args) {
     return function(soul, commandId, now = Date.now()) {
-        processCustom(args).call(this, soul, commandId, now);
-        insertReminderRetry({
-            soul, 
-            now, 
-            commandId: "guildReset", 
-            display: (user) => {
-                const pingable = getRoleStartingWith(user, "EGuild") ?? user;
-                return `${pingable.mention} Did you know? :low_brightness:**GUILD UPGRADE**:low_brightness: has reset *desu* You can do it with </guild upgrade:961046237753257994>!`
-            },
-            dTime: getMillisecondsUntilNextSaturday(),
-            isFixed: true,
-        });
-    }
-}
+        const user = getRoleStartingWith(soul.user, "EGuild") ?? soul.user;
 
-export function connectedProcess(soul, commandId, now = Date.now(), args = {}) {
-    const users = getUsers(soul, commandId)
-    stopStory(soul, commandId);
-
-    [soul.user, ...users].forEach((user) => {
-        insertReminderRetry({soul: {user, m: soul.m}, now, commandId, ...args});
-    });
-}
-
-export function processCustom(args) {
-    return function(soul, commandId, now = Date.now()) {
-        const dTime = args.retrieveDTime === true ? getCooldownFromMsg(soul.m, this.location) : args?.dTime;
-
-        defaultProcess(soul, commandId, now, {dTime, isFixed: args?.isFixed, display: args?.display});
-    }
-}
-
-export function processWithMove(soul, commandId, now = Date.now()) {
-    ruleMove(soul);
-    defaultProcess(soul, commandId, now);
-}
-
-export function defaultProcessWithoutSave(soul, commandId) {
-    stopStory(soul, commandId);
-}
-
-export function processWithCustomDisplay(displayFn) {
-    return function(soul, commandId, now = Date.now()) {
-        stopStory(soul, commandId);
-        insertReminderRetry({soul, now, commandId, display: displayFn(soul.user)});
+        customizeProcess(
+            [
+                saveOne({user}), 
+                saveOne({
+                    user,
+                    commandId: "guildReset", 
+                    dTime: getMillisecondsUntilNextSaturday(), 
+                    display: (user) => {
+                        return `${user.mention} Did you know? :low_brightness:**GUILD UPGRADE**:low_brightness: has reset *desu* You can do it with </guild upgrade:961046237753257994>!`
+                    }, 
+                    isFixed: true
+                })
+            ],
+        ).call(this, soul, commandId, now, args);
     }
 }

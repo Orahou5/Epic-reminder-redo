@@ -6,7 +6,7 @@ import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { connectedProcessWithArgs, processCustom } from "./commons/process.js";
+import { processConnected, processCustom } from "./commons/process.js";
 
 const command = "horse";
 
@@ -40,7 +40,7 @@ const command = "horse";
             data: ["usernameDash", "horse breeding", "got a tier"],
             preverif: "tier",
             location: "authorName=description",
-            process: connectedProcessWithArgs({display: createDisplay("horse breed", ":magnet:")}),
+            process: processConnected({display: createDisplay("horse breed", ":magnet:")}),
         },
         customizeCooldown("this command"),
         {

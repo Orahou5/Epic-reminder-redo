@@ -5,7 +5,7 @@ import { Process, Settings } from "../process.js";
 import { stopStory } from "../rule.js";
 import { convertToMilliseconds } from "../utils.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { connectedProcess, defaultProcess } from "./commons/process.js";
+import { processConnected } from "./commons/process.js";
 
 const command = "duel";
 
@@ -33,7 +33,7 @@ const command = "duel";
             data: ["usernameDash", "duel", "boom"],
             preverif: "boom",
             location: "authorName=description",
-            process: connectedProcess,
+            process: processConnected(),
         },
         customizeCooldown("duel recently"),
         {
