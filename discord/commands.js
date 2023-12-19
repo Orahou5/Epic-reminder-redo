@@ -62,16 +62,10 @@ class Command {
     }
 }
 
-Command.prototype.matcher = {
-
-}
-
-class Hunt {
+export class Hunt extends Command{
     constructor(pending) {
         super(pending);
     }
-
-
 }
 
 Hunt.prototype.matcher = {
@@ -89,4 +83,3 @@ Hunt.prototype.matcher = {
         "cooldown": stopStory,
     }
 }
-

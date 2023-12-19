@@ -1,4 +1,5 @@
 import { CommandHandler } from "../commandHandler.js";
+import { pendings } from "../pending copy.js";
 import { createPending } from "../pending.js";
 import { Process, Settings } from "../process.js";
 import { convertToMilliseconds } from "../utils.js";
@@ -9,7 +10,11 @@ const command = "hunt";
 
 {
     CommandHandler.addTrigger("hunt", async(msg) => {
-        createPending(msg.channel.id, msg.author, command);
+        const pending = createPending(msg.channel.id, msg.author, command);
+
+        pendings.add(pending, msg.channel.id);
+
+        console.log("hunt trigger", pendings);
     });
 
     Settings.add(command, {

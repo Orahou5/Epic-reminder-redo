@@ -52,3 +52,34 @@ export function convertToMilliseconds({
 }) {
     return milliseconds + 1000 * (seconds + 60 * (minutes + 60 * (hours + 24 * days)));
 }
+
+export function setOrMerge(object, property, value) {
+    object[property] = {
+        ...(object[property] ?? {}),
+        ...value
+    }
+}
+
+export function createAndSet(object, property, value) {
+    if(object[property] === undefined) {
+        object[property] = {};
+    }
+
+    object[property] = value;
+}
+
+//set all the path or append
+export function setPath(object, path, value) {
+    const [first, ...rest] = path;
+
+    if(rest.length === 0) {
+        object[first] = value;
+        return;
+    }
+
+    if(object[first] === undefined) {
+        object[first] = {};
+    }
+
+    setPath(object[first], rest, value);
+}
