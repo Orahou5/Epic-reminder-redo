@@ -1,6 +1,7 @@
-import { insertReminder } from "../../database.js";
-import { Settings } from "../../process.js";
-import { showHoursMinutesSeconds } from "../../utils.js";
+import { insertReminder } from "../../database/database.js";
+//import { Settings } from "../../scripts/resolve.js";
+import { showHoursMinutesSeconds } from "../../scripts/utils.js";
+import { Settings } from "../../system/Settings.js";
 
 export function createDisplay(command, emoji, emoji2 = null) {
     return function(user) {
@@ -25,9 +26,10 @@ export function createDisplayGuild(command, interactionCommand, emoji, emoji2 = 
 
 export function insertReminderRetry({user, msg, now, commandId, display = null, dTime = null, isFixed = null, delay = 10 * 1000}) {
     console.log("inserting");
-    showHoursMinutesSeconds(`inserting ${commandId}`);
 
     const settings = Settings.get(commandId);
+
+    showHoursMinutesSeconds(`inserting ${commandId} for ${dTime ?? settings.dTime}`);
 
     const displayFn = display ?? createDisplay(commandId, settings.emoji, settings.emoji2)
 

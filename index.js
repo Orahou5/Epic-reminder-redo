@@ -1,13 +1,12 @@
 import "dotenv/config.js";
 import { Client } from "oceanic.js";
-import { CommandHandler } from "./commandHandler.js";
-import "./database.js";
-import { closeDatabase, unpauseAllReminders } from "./database.js";
+import "./database/database.js";
+import { closeDatabase, unpauseAllReminders } from "./database/database.js";
+import { extendsMessage } from "./discord/discordUtils.js";
 import "./imported.js";
-import { resolve } from "./process.js";
-import { startTimeloop } from "./synchronizer.js";
-import { extendsMessage } from "./discordUtils.js";
-import { dirLogCut, dirLogMini } from "./utils.js";
+import { resolve } from "./scripts/resolve.js";
+import { CommandHandler } from "./system/commandHandler.js";
+import { startTimeloop } from "./system/synchronizer.js";
 
 export const client = new Client({ 
     auth: `Bot ${process.env.DISCORD_TOKEN_ERPG}`,

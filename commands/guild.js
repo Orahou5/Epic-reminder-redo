@@ -1,7 +1,7 @@
-import { CommandHandler } from "../commandHandler.js";
-import { createPending } from "../pending.js";
-import { Process, Settings } from "../process.js";
-import { convertToMilliseconds } from "../utils.js";
+import { createPending } from "../scripts/pending.js";
+import { Process, Settings } from "../scripts/process.js";
+import { convertToMilliseconds } from "../scripts/utils.js";
+import { CommandHandler } from "../system/commandHandler.js";
 import { epicJailCommand } from "./commons/commands.js";
 import { createDisplayGuild } from "./commons/default.js";
 import { processGuild } from "./commons/process.js";

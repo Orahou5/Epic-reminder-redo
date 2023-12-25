@@ -1,9 +1,9 @@
-import { CommandHandler } from "../commandHandler.js";
-import { getMultiplesUsersFromMessage } from "../discordUtils.js";
-import { createConnectedPending } from "../pending.js";
-import { Process, Settings } from "../process.js";
-import { stopStory } from "../rule.js";
-import { convertToMilliseconds } from "../utils.js";
+import { getMultiplesUsersFromMessage } from "../scripts/discordUtils.js";
+import { createConnectedPending } from "../scripts/pending.js";
+import { Process, Settings } from "../scripts/process.js";
+import { convertToMilliseconds } from "../scripts/utils.js";
+import { CommandHandler } from "../system/commandHandler.js";
+import { stopStory } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { processConnected } from "./commons/process.js";
 

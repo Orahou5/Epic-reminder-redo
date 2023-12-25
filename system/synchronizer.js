@@ -1,7 +1,8 @@
-import { disableReminder, getReminders, pauseReminder, unpauseReminder } from "./database.js";
-import { client } from "./index.js";
-import { deleteExpired } from "./pending.js";
-import { convertToMilliseconds, showHoursMinutesSeconds } from "./utils.js";
+import { disableReminder, getReminders, pauseReminder, unpauseReminder } from "../database/database.js";
+import { client } from "../index.js";
+//import { deleteExpired } from "../scripts/pending.js";
+import { convertToMilliseconds, showHoursMinutesSeconds } from "../scripts/utils.js";
+import { deleteExpired } from "./Pending.js";
 
 class Timeloop {
     static scenarios = [];

@@ -1,4 +1,4 @@
-import { Process } from "./process.js";
+import { Process } from "./resolve.js";
 
 const pending = {};
 const symlink = {};

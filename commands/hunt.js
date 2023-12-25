@@ -1,20 +1,19 @@
-import { CommandHandler } from "../commandHandler.js";
-import { pendings } from "../pending copy.js";
-import { createPending } from "../pending.js";
-import { Process, Settings } from "../process.js";
-import { convertToMilliseconds } from "../utils.js";
-import { cryCommand, customizeCooldown, epicJailCommand, loseFight, winFight } from "./commons/commands.js";
-import { defaultProcess, processWithMove } from "./commons/process.js";
+//import { Process, Settings } from "../scripts/process.js";
+import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
+import { CommandHandler } from "../system/commandHandler.js";
+import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
+import { defaultProcess, processWithMove } from "./commons/operation.js";
 
 const command = "hunt";
 
 {
     CommandHandler.addTrigger("hunt", async(msg) => {
-        const pending = createPending(msg.channel.id, msg.author, command);
+        //createPending(msg.channel.id, msg.author, command);
 
-        pendings.add(pending, msg.channel.id);
-
-        console.log("hunt trigger", pendings);
+        createPendingUser(msg.author, command, msg.channel.id);
     });
 
     Settings.add(command, {
@@ -24,36 +23,19 @@ const command = "hunt";
     });
 
     const toBeRegistered = [
-        winFight,
         customizeCooldown("looked around"),
         {
-            data: ["usernameStar", "hunting together!"],
-            preverif: "together",
+            data: [["found and killed", "hunting together!", "found a", "fights the horde", "but lost fighting", "cried"]],
             location: "content",
             process: defaultProcess
         },
         {
-            data: ["usernameStar", "found a"],
-            preverif: "found a",
-            location: "content",
-            process: defaultProcess
-        },
-        {
-            data: ["usernameStar", "fights the horde"],
-            preverif: "fights",
-            location: "content",
-            process: defaultProcess
-        },
-        {
-            data: ["usernameStar", "pretends"],
-            preverif: "pretends",
+            data: ["pretends"],
             location: "content",
             process: processWithMove
         },
-        loseFight,
-        cryCommand,
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 }

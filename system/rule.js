@@ -1,27 +1,30 @@
-import { buttonNo, buttonString, buttonStringEmoji, buttonYes, createComponentRow, send } from "./discordUtils.js";
-import { createPending, findPending } from "./pending.js";
+import { buttonNo, buttonString, buttonStringEmoji, buttonYes } from "../discord/Button.js";
+import { createComponentRow } from "../discord/components.js";
+import { send } from "../discord/discordUtils.js";
+import { createPendingUser } from "./Pending.js";
+//import { createPending } from "../scripts/pending.js";
 
-export function stopStory(soul, commandId) {
+export function stopStory(pending) {
     console.log("stoppending")
-    findPending(soul.user, commandId)?.removeFromPending();
+    pending.removeFromStack();
 }
 
-export function createPetHelper(soul) {
-    createPending(soul.m.channel.id, soul.user, "pethelper");
+export function createPetHelper(pending, msg) {
+    createPendingUser(pending.user, "pethelper", msg.channel.id);
 }
 
-export function getUsers(soul, commandId) {
-    return findPending(soul.user, commandId)?.getUsers() ?? [];
+export function getUsers(pending) {
+    return pending.getUsers() ?? [];
 }
 
-export function ruleMove(soul) {
-    send(soul.m.channel, `${soul.user}, Don't forget to switch back to your original area. *desu*`);
+export function ruleMove(pending, msg) {
+    send(msg.channel, `${pending.user}, Don't forget to switch back to your original area. *desu*`);
 }
 
-export function rulePetHelper(soul) {
-    const match = soul.m?.["field0Value"]?.match(/^\D+(\d+)\D+(\d+)/i)
+export function rulePetHelper(pending, msg) {
+    const match = msg?.["field0Value"]?.match(/^\D+(\d+)\D+(\d+)/i)
 
-    console.log(soul.m?.["field0Value"])
+    console.log(msg?.["field0Value"])
 
     if(match?.length < 3) return;
 
@@ -48,8 +51,8 @@ export function rulePetHelper(soul) {
         }, command + index, true);
     });
 
-    soul.m.channel.createMessage({
-        content: `${soul.user.mention} For an average chance of taming of ${percentage}%, do the following:\n\`${arrayOfCommands.join(" ")}\``,
+    msg.channel.createMessage({
+        content: `${pending.user.mention} For an average chance of taming of ${percentage}%, do the following:\n\`${arrayOfCommands.join(" ")}\``,
         components: [
             createComponentRow(arrayOfButtons.slice(0, 3)),
             createComponentRow(arrayOfButtons.slice(3))
@@ -57,10 +60,10 @@ export function rulePetHelper(soul) {
     })
 }
 
-export function ruleSendTraining(soul) {
-    const spot = ["mine!", "casino?", "field!", "forest!", "river!"].find((spot) => soul.m.content.includes(spot)).slice(0, -1);
+export function ruleSendTraining(pending, msg) {
+    const spot = ["mine!", "casino?", "field!", "forest!", "river!"].find((spot) => msg.content.includes(spot)).slice(0, -1);
 
-    trainingUtility[spot]?.fn?.(soul.m, soul.user);
+    trainingUtility[spot]?.fn?.(msg, pending.user);
 }
 
 const trainingUtility = {

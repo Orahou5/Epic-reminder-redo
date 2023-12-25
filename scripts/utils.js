@@ -83,3 +83,52 @@ export function setPath(object, path, value) {
 
     setPath(object[first], rest, value);
 }
+
+export function getPath(object, path) {
+    if(object === undefined || path.length <= 0) return object;
+    
+    const [first, ...rest] = path;
+
+    if(rest.length === 0) {
+        return object[first];
+    }
+
+    if(object[first] === undefined) {
+        return;
+    }
+
+    return getPath(object[first], rest);
+}
+
+export function iterateDeep(object, depth = 0, callback = () => {}, parent = null, key = "") {
+    if(object === undefined) return;
+    if(depth === 0 || typeof object !== "object") return callback(object, parent, key);
+
+    Object.entries(object).forEach(([k, value]) => {
+        iterateDeep(value, depth - 1, callback, object, k);
+    });
+}
+
+export function deleteAllEmptyOnDepth(object, depth = 0) {
+    const cb = (obj, parent, key) => {
+        if(isEmpty(obj)) {
+            delete parent[key];
+        }
+    }
+
+    for(let i = depth; i > 0; i--) {
+        iterateDeep(object, i, cb);
+    }
+}
+
+export function isEmpty(obj) {
+    if(typeof obj !== "object") return false;
+
+    for (const prop in obj) {
+        if (Object.hasOwn(obj, prop)) {
+            return false;
+        }
+    }
+
+    return true;
+}
