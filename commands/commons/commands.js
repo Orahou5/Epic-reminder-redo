@@ -12,7 +12,7 @@ export function customizeCooldown(regString) {
     return {
         data: ["cooldown", regString],
         location: "authorName=title",
-        process: processCustom({retrieveDTime: true}),
+        process: processCustom({retrieveDTime: true, users: []}),
     }
 }
 

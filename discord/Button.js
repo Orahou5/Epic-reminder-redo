@@ -1,4 +1,4 @@
-import { ButtonStyles } from "oceanic.js";
+import { ButtonStyles, ComponentTypes } from "oceanic.js";
 
 class Button {
     constructor() {
@@ -77,4 +77,4 @@ const buttonString = (string, activated) => new ButtonSuccess(activated).setCust
 const buttonNo = (activated) => new ButtonDanger(activated).setCustomID("no").setLabel("no").build();
 const buttonYes = (activated) => buttonString("yes", activated);
 
-export { buttonStringEmoji, buttonEmoji, buttonString, buttonNo, buttonYes };
+export { buttonEmoji, buttonNo, buttonString, buttonStringEmoji, buttonYes };

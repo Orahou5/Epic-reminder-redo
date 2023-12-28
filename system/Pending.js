@@ -1,4 +1,4 @@
-import { convertToMilliseconds, deleteAllEmptyOnDepth, iterateDeep, setPath } from "../scripts/utils.js";
+import { convertToMilliseconds, deleteAllEmptyOnDepth, iterateDeep, setPath, showDate } from "../scripts/utils.js";
 import { commandsNoUser, commandsUser } from "./Commands.js";
 
 export const pendingUser = {
@@ -25,6 +25,8 @@ const pendingNoUser = {
             const cb = (pending) => {
                 if(pending.disabled) {
                     pending.removeFromStack();
+                    showDate("deleted", pending.user.username, pending.commandId)
+                    //console.log("deleted", pending.user.username, pending.commandId)
                 }
             }
 
@@ -45,8 +47,18 @@ const pendingNoUser = {
         return Object.values(path);
     }
 
-    Object.assign(pendingUser, { filter, deleteExpired: deleteExpired(3), deleteEmpty: deleteEmpty(2) });
-    Object.assign(pendingNoUser, { filter, deleteExpired: deleteExpired(2), deleteEmpty: deleteEmpty(1) });
+    function define(obj, expi, empty) {
+        Object.defineProperties(obj, {
+            add: {enumerable: false, writable: false},
+            remove: {enumerable: false, writable: false},
+            deleteExpired: {value: deleteExpired(expi), enumerable: false, writable: false},
+            deleteEmpty: {value: deleteEmpty(empty), enumerable: false, writable: false},
+            filter: {value: filter, enumerable: false, writable: false},
+        });
+    }
+
+    define(pendingUser, 3, 2);
+    define(pendingNoUser, 2, 1);
 }
 
 class Pending {
@@ -91,6 +103,8 @@ class Pending {
     }
 
     resolve(msg, now = Date.now()) {
+        if(this.disabled) return;
+        
         this.commands.forEach((command) => {
             const bool = command.checkData(msg);
 
@@ -107,14 +121,14 @@ class Pending {
     }
 }
 
-const createPending = (commands, stack) => (disable_at = Date.now() + convertToMilliseconds({minutes: 5})) => (user, commandId, channelId, users = []) => {
-    const pending = new Pending(user, commandId, commands, channelId, stack, users, disable_at);
+const createPending = (commands, stack) => ({user, commandId, channelId, users = [], disable_at = convertToMilliseconds({minutes: 5})}) => {
+    const pending = new Pending(user, commandId, commands, channelId, stack, users, Date.now() + disable_at);
     pending.addToStack();
     return pending;
 }
 
-export const createPendingUser = createPending(commandsUser, pendingUser) ();
-export const createPendingNoUser = createPending(commandsNoUser, pendingNoUser) ();
+export const createPendingUser = createPending(commandsUser, pendingUser);
+export const createPendingNoUser = createPending(commandsNoUser, pendingNoUser);
 
 export const createDoublePending = (user, commandId, channelId, users = []) => {
     const pending1 = createPendingUser(user, commandId, channelId, users);
@@ -131,8 +145,6 @@ export function addConnection(pending1, pending2) {
 }
 
 export function deleteExpired() {
-    console.log("deleteexpired");
-    
     pendingUser.deleteExpired();
     pendingUser.deleteEmpty();
 

@@ -1,11 +1,12 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { ruleSendTraining } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { defaultProcess, processCustom, processPetHelper, processTrainingPetHelper } from "./commons/process.js";
+import { defaultProcess, processCustom, processPetHelper, processTrainingPetHelper } from "./commons/operation.js";
 
 const command = "training";
 
@@ -15,7 +16,7 @@ const command = "training";
 
         if(["ultr", "ultraining"].includes(args[1].toLowerCase()) && ["p", "progress", "shop", "buy"].includes(args[2]?.toLowerCase())) return;
 
-        createPending(msg.channel.id, msg.author, command)
+        createPendingUser({user: msg.author, commandId: command, channelId: msg.channel.id})
     });
 
     Settings.add(command, {
@@ -27,37 +28,33 @@ const command = "training";
     const toBeRegistered = [
         customizeCooldown("trained already"),
         {
-            data: ["usernameStar", "epic npc", "well done"],
-            preverif: "well done",
+            data: ["epic npc", "well done"],
             location: "description",
             process: processCustom({display: createDisplay("ultraining", "<:cyclo:940363035296555019>")})
         },
         {
-            data: ["usernameStar", "is training"],
-            preverif: "is training",
+            data: ["is training"],
             location: "content",
             process : ruleSendTraining
         },
         {
-            data: ["usernameStar", "well done", "earned"],
-            preverif: "well done",
+            data: ["well done", "earned"],
             location: "content",
             process: processTrainingPetHelper
         },
         {
-            data: ["usernameStar", "better luck next time"],
-            preverif: "luck",
+            data: ["better luck next time"],
             location: "content",
             process: defaultProcess
         },
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    // Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 
-    Process.addCommand("pethelper", {
-        data: ["usernameStar", "is approaching"],
-        preverif: "suddenly",
+    commandsUser.addCommand("pethelper", {
+        data: ["is approaching"],
         location: "field0Name",
         process: processPetHelper
     })

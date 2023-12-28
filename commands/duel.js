@@ -1,11 +1,12 @@
-import { getMultiplesUsersFromMessage } from "../scripts/discordUtils.js";
-import { createConnectedPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
+import { getMultiplesUsersFromMessage } from "../discord/discordUtils.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { stopStory } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { processConnected } from "./commons/process.js";
+import { processConnected } from "./commons/operation.js";
 
 const command = "duel";
 
@@ -19,7 +20,12 @@ const command = "duel";
 
         if(users === undefined) return;
 
-        createConnectedPending(msg.channel.id, msg.author, command, users);
+        createPendingUser({
+            user: msg.author, 
+            commandId: command, 
+            channelId: msg.channel.id,
+            users: users
+        });
     });
     
     Settings.add(command, {
@@ -30,20 +36,19 @@ const command = "duel";
 
     const toBeRegistered = [
         {
-            data: ["usernameDash", "duel", "boom"],
-            preverif: "boom",
-            location: "authorName=description",
+            data: ["duel", ["reward", "nobody won"]],
+            location: "authorName=field0Value",
             process: processConnected(),
         },
         customizeCooldown("duel recently"),
         {
-            data: ["usernameStar", "duel cancelled"],
-            preverif: "cancelled",
+            data: ["duel cancelled"],
             location: "content",
             process: stopStory
         },
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    // Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 }

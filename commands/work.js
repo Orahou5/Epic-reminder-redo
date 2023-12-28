@@ -1,9 +1,10 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess, processWithMove } from "./commons/process.js";
+import { defaultProcess, processWithMove } from "./commons/operation.js";
 
 const command = "work";
 
@@ -14,7 +15,7 @@ const command = "work";
         "bowsaw", "boat", "tractor", "drill",
         "chainsaw", "bigboat", "greenhouse", "dynamite" 
     ], async(msg) => {
-        createPending(msg.channel.id, msg.author, command);
+        createPendingUser({user: msg.author, commandId: command, channelId: msg.channel.id});
     });
     
     Settings.add(command, {
@@ -25,31 +26,23 @@ const command = "work";
 
     const toBeRegistered = [
         {
-            data: ["usernameStar", "got", ["log", "ruby", "coins", "fish", "apple", "banana"]],
-            preverif: "got",
+            data: ["got", ["log", "ruby", "coins", "fish", "apple", "banana"]],
             location: "content",
             process: defaultProcess
         },
         {
-            data: ["usernameStar", "fights **the ruby dragon**"],
-            preverif: "ruby dragon",
+            data: [["fights **the ruby dragon**", "ran away"]],
             location: "content",
             process: processWithMove
         },
         {
-            data: ["usernameStar", "ran away"],
-            preverif: "ran",
-            location: "content",
-            process: processWithMove
-        },
-        {
-            data: ["usernameStar", "sleeps", "got 2"],
+            data: ["sleeps", "got 2"],
             preverif: "sleeps",
             location: "content",
             process: processWithMove
         },
         {
-            data: ["usernameStar", ["cried", "sleeps"]],
+            data: [["cried", "sleeps"]],
             preverif: "cried",
             location: "content",
             process: defaultProcess
@@ -58,5 +51,5 @@ const command = "work";
         epicJailCommand,
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 }

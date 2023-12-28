@@ -1,6 +1,7 @@
 import { buttonNo, buttonString, buttonStringEmoji, buttonYes } from "../discord/Button.js";
 import { createComponentRow } from "../discord/components.js";
 import { send } from "../discord/discordUtils.js";
+import { convertToMilliseconds } from "../scripts/utils.js";
 import { createPendingUser } from "./Pending.js";
 //import { createPending } from "../scripts/pending.js";
 
@@ -10,7 +11,12 @@ export function stopStory(pending) {
 }
 
 export function createPetHelper(pending, msg) {
-    createPendingUser(pending.user, "pethelper", msg.channel.id);
+    createPendingUser({
+        user: pending.user, 
+        commandId: "pethelper", 
+        channelId: msg.channel.id, 
+        disable_at: convertToMilliseconds({minutes: 1})
+    });
 }
 
 export function getUsers(pending) {

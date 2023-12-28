@@ -62,7 +62,9 @@ function finder(locations) {
 
         if(candidate === undefined) continue;
 
-        if(candidate.includes("**")) return candidate.slice(2, -2);
+        if(candidate.includes("**")) {
+            return candidate.split("**").at(1);
+        } 
 
         return getIdFromMentionString(candidate);
     }

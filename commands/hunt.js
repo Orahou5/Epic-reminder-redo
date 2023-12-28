@@ -11,9 +11,7 @@ const command = "hunt";
 
 {
     CommandHandler.addTrigger("hunt", async(msg) => {
-        //createPending(msg.channel.id, msg.author, command);
-
-        createPendingUser(msg.author, command, msg.channel.id);
+        createPendingUser({user: msg.author, commandId: command, channelId: msg.channel.id});
     });
 
     Settings.add(command, {

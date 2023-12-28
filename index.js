@@ -5,6 +5,7 @@ import { closeDatabase, unpauseAllReminders } from "./database/database.js";
 import { extendsMessage } from "./discord/discordUtils.js";
 import "./imported.js";
 import { resolve } from "./scripts/resolve.js";
+import { dirLog } from "./scripts/utils.js";
 import { CommandHandler } from "./system/commandHandler.js";
 import { startTimeloop } from "./system/synchronizer.js";
 
@@ -27,6 +28,7 @@ client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
     //console.log("memberRole", msg.member.roles);
+    //dirLog(msg.embeds);
 
     if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

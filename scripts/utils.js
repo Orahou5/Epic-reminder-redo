@@ -6,6 +6,21 @@ export function showHoursMinutesSeconds(display = "mouchard", milliseconds = Dat
     console.log(`${display} : ${hour}h ${minutes}m ${seconds}s`)
 }
 
+export function showDate(...args) {
+    const date = new Date();
+    const options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric"
+    }
+    console.log(...args, " : ", date.toLocaleDateString(undefined, options));
+}
+
+
 export function escape(string){
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
