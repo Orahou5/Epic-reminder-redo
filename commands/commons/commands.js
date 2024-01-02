@@ -2,7 +2,7 @@ import { stopStory } from "../../system/rule.js"
 import { defaultProcess, processCustom } from "./operation.js"
 
 export const cryCommand = {
-    data: ["usernameStar", "cried"],
+    data: ["cried"],
     preverif: "cried",
     location: "content",
     process: defaultProcess,
@@ -18,20 +18,18 @@ export function customizeCooldown(regString) {
 
 export const epicJailCommand = {
     data: ["is now in the jail"],
-    preverif: "jail",
     location: "content",
     process: stopStory
 }
 
 export const winFight = {
-    data: ["usernameStar", "found and killed"],
-    preverif: "found",
+    data: ["found and killed"],
     location: "content",
     process: defaultProcess,
 }
 
 export const loseFight = {
-    data: ["usernameStar", "but lost fighting"],
+    data: ["but lost fighting"],
     preverif: "fighting",
     location: "content",
     process: defaultProcess,

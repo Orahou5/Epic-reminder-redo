@@ -54,6 +54,8 @@ export const dirLog = dirLogCut(null);
 
 export const dirLogMini = dirLogCut(1);
 
+export const log = (...args) => console.log(...args) || args.at(0);
+
 export function applyPercentage(baseValue, percentage){
     return baseValue - (baseValue * percentage / 100);
 }
@@ -66,6 +68,16 @@ export function convertToMilliseconds({
     milliseconds = 0,
 }) {
     return milliseconds + 1000 * (seconds + 60 * (minutes + 60 * (hours + 24 * days)));
+}
+
+export function bindSomeObject(func, object, continueWithArgs = false) {
+    if(continueWithArgs) {
+        return function(obj, continueWithArgs) {
+            return bindSomeObject(func, {...object, ...obj}, continueWithArgs);
+        }
+    } else {
+        return func(object);
+    }
 }
 
 export function setOrMerge(object, property, value) {

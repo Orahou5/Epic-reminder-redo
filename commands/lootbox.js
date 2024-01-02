@@ -1,10 +1,12 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
+import { extractUserAndChannelId } from "../discord/discordUtils.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsNoUser, commandsUser } from "../system/Commands.js";
+import { createDoublePending } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { stopStory } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { defaultProcess } from "./commons/operation.js";
 
 const command = "lootbox";
 
@@ -18,7 +20,7 @@ const command = "lootbox";
         console.log(bool, bool2);
 
         if(bool || bool2) {
-            createPending(msg.channel.id, msg.author, command);
+            createDoublePending({...extractUserAndChannelId(msg), commandId: command})
         }
     });
 
@@ -28,24 +30,22 @@ const command = "lootbox";
         emoji: "<:box:788407486515249200>"
     });
 
-    Process.addCommands(command, [
+    commandsUser.addCommands(command, [
         customizeCooldown("bought a lootbox"),
         {
-            data: ["mention", "you have to be level"],
-            preverif: "be level",
+            data: ["you have to be level"],
             location: "content",
             process: stopStory
         },
         {
-            data: ["mention", "are you trying to buy"],
-            preverif: "buy",
+            data: ["are you trying to buy"],
             location: "content",
             process: stopStory
         },
         epicJailCommand
-    ], true);
+    ]);
 
-    Process.addCommands(command, [
+    commandsNoUser.addCommands(command, [
         {
             data: ["lootbox", "successfully bought for"],
             preverif: "bought",
@@ -58,5 +58,5 @@ const command = "lootbox";
             location: "content",
             process: stopStory
         }
-    ], false);
+    ]);
 }

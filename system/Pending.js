@@ -4,9 +4,11 @@ import { commandsNoUser, commandsUser } from "./Commands.js";
 export const pendingUser = {
     add(pending, channelId) {
         setPath(this, [channelId, pending.user.username, pending.commandId], pending);
+        setPath(this, [channelId, pending.user.id, pending.commandId], pending);
     },
     remove(pending, channelId) {
         delete this[channelId][pending.user.username][pending.commandId];
+        delete this[channelId][pending.user.id][pending.commandId];
     },
 };
 
@@ -40,9 +42,9 @@ const pendingNoUser = {
         }
     }
 
-    function filter(channelId, username = null) {
-        console.log("filter", this, channelId, username);
-        const path = (username ? this?.[channelId]?.[username] : this?.[channelId]) ?? {};
+    function filter(channelId, identifier = null) {
+        console.log("filter", this, channelId, identifier);
+        const path = (identifier ? this?.[channelId]?.[identifier] : this?.[channelId]) ?? {};
 
         return Object.values(path);
     }
@@ -130,9 +132,9 @@ const createPending = (commands, stack) => ({user, commandId, channelId, users =
 export const createPendingUser = createPending(commandsUser, pendingUser);
 export const createPendingNoUser = createPending(commandsNoUser, pendingNoUser);
 
-export const createDoublePending = (user, commandId, channelId, users = []) => {
-    const pending1 = createPendingUser(user, commandId, channelId, users);
-    const pending2 = createPendingNoUser(user, commandId, channelId, users);
+export const createDoublePending = ({user, commandId, channelId, users = [], disable_at = convertToMilliseconds({minutes: 5})}) => {
+    const pending1 = createPendingUser({user, commandId, channelId, users, disable_at});
+    const pending2 = createPendingNoUser({user, commandId, channelId, users, disable_at});
 
     addConnection(pending1, pending2);
 

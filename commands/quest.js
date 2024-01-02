@@ -1,11 +1,13 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
+import { extractUserAndChannelId } from "../discord/discordUtils.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { stopStory } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
 import { createDisplay } from "./commons/default.js";
-import { defaultProcess, processCustom } from "./commons/process.js";
+import { defaultProcess, processCustom } from "./commons/operation.js";
 
 const command = "quest";
 
@@ -16,7 +18,7 @@ const command = "quest";
         const bool = args.at(1) === "quest" && args.at(2) !== "cancel";
         const bool2 = args.at(1) === "epic" && args.at(2) === "quest";
 
-        if(bool || bool2) createPending(msg.channel.id, msg.author, command);
+        if(bool || bool2) createPendingUser({...extractUserAndChannelId(msg), commandId: command})
     });
     
     Settings.add(command, {
@@ -27,38 +29,33 @@ const command = "quest";
 
     const toBeRegistered = [
         {
-            data: ["usernameStar", "got a", "new quest"],
-            preverif: "quest",
+            data: ["got a", "new quest"],
             location: "content",
             process: defaultProcess
         },
         {
-            data: ["mention", "you did not accept the quest"],
-            preverif: "quest",
+            data: ["you did not accept the quest"],
             location: "content",
             process: processCustom({dTime: convertToMilliseconds({hours: 1}), isFixed: true})
         },
         {
-            data: ["usernameDash", "epic quest", ["rewards", "better luck next time"]],
-            preverif: "epic quest",
+            data: ["epic quest", ["rewards", "better luck next time"]],
             location: "authorName=field0Name",
             process: processCustom({display: createDisplay("epic quest", ":horse_racing:")})
         },
         customizeCooldown("claimed a quest"),
         {
-            data: ["usernameDash", "quest", "completed"],
-            preverif: "completed",
+            data: ["quest", "completed"],
             location: "authorName=description",
             process: stopStory
         },
         {
-            data: ["mention", "epic quest cancelled"],
-            preverif: "cancelled",
+            data: ["epic quest cancelled"],
             location: "content",
             process: stopStory
         },
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 }

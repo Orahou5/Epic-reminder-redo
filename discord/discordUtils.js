@@ -85,7 +85,7 @@ export function send(channel, content) {
 }
 
 export function getIdFromMentionString(string) {
-    return string.match(/^<@!?(\d+)>$/)?.[1];
+    return string.match(/<@!?(\d+)>/)?.[1];
 }
 
 export function getMultiplesUsersFromMessage({msg, start = 2, min = 1, max = 10}) {
@@ -102,4 +102,11 @@ export function getMultiplesUsersFromMessage({msg, start = 2, min = 1, max = 10}
     }
 
     return users;
+}
+
+export function extractUserAndChannelId(msg) {
+    return {
+        user: msg.author,
+        channelId: msg.channel.id
+    }
 }

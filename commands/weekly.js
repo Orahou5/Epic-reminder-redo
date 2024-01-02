@@ -1,15 +1,17 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
+import { extractUserAndChannelId } from "../discord/discordUtils.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { commandsUser } from "../system/Commands.js";
+import { createPendingUser } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { defaultProcess } from "./commons/operation.js";
 
 const command = "weekly";
 
 {
     CommandHandler.addTrigger("weekly", async(msg) => {
-        createPending(msg.channel.id, msg.author, command);
+        createPendingUser({...extractUserAndChannelId(msg), commandId: command})
     });
 
     Settings.add(command, {
@@ -20,8 +22,7 @@ const command = "weekly";
 
     const toBeRegistered = [
         {
-            data: ["usernameDash", "weekly"],
-            preverif: "weekly",
+            data: ["weekly"],
             location: "authorName",
             process: defaultProcess
         },
@@ -29,5 +30,5 @@ const command = "weekly";
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 }
