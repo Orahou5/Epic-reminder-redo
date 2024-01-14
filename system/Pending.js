@@ -1,5 +1,6 @@
 import { convertToMilliseconds, deleteAllEmptyOnDepth, iterateDeep, setPath, showDate } from "../scripts/utils.js";
 import { commandsNoUser, commandsUser } from "./Commands.js";
+import { stopStory } from "./rule.js";
 
 export const pendingUser = {
     add(pending, channelId) {
@@ -68,11 +69,12 @@ class Pending {
         console.log("createpending");
         this.user = user;
         this.commandId = commandId;
-        this.commands = commands.getCommand(commandId);
+        //this.commands = commands.getCommand(commandId);
         this.channelId = channelId;
         this.stack = stack;
         this.users = users;
         this.pendingConnections = [];
+        this.process = stopStory;
 
         this.disable_at = disable_at;
 

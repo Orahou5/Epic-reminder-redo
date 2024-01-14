@@ -67,3 +67,20 @@ class Command {
 export const commandsUser = new Commands();
 
 export const commandsNoUser = new Commands();
+
+export function checkData(msg, data, location) {
+    const string = msg[location]?.toLowerCase();
+
+    if(string === undefined) return false;
+
+    return data.every((d) => {
+        return Array.isArray(d) ? 
+        d.some((d) => string.includes(d)) : 
+        string.includes(d); 
+    })
+}
+
+export function checkCommandUser(msg, userData, user) {
+    if(userData === undefined) return false;
+    return msg[userData.location]?.toLowerCase().includes(userData.data(user));
+}

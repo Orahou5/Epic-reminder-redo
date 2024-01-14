@@ -2,10 +2,7 @@ import "dotenv/config.js";
 import { Client } from "oceanic.js";
 import "./database/database.js";
 import { closeDatabase, unpauseAllReminders } from "./database/database.js";
-import { extendsMessage } from "./discord/discordUtils.js";
 import "./imported.js";
-import { resolve } from "./scripts/resolve.js";
-import { dirLog } from "./scripts/utils.js";
 import { CommandHandler } from "./system/commandHandler.js";
 import { startTimeloop } from "./system/synchronizer.js";
 
@@ -16,7 +13,7 @@ export const client = new Client({
     }
 });
 
-const erpgId = "555955826880413696"
+export const erpgId = "555955826880413696"
 
 client.once("ready", async() => {
     console.log("Ready as", client.user.tag);
@@ -30,10 +27,10 @@ client.on("messageCreate", async(msg) => {
     //console.log("memberRole", msg.member.roles);
     //dirLog(msg.embeds);
 
-    if(msg.author.id === erpgId) {
+    /*if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);
         resolve(extendedMsg);
-    }
+    }*/
 
     if(msg.content.startsWith("rpg")) {
         console.log("\n\nstart")

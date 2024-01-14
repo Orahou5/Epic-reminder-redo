@@ -1,7 +1,9 @@
 import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
+import { commandsUser } from "../system/Commands.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
-import { customizeCooldown, epicJailCommand, loseFight, winFight } from "./commons/commands.js";
+import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
+import { defaultProcess } from "./commons/operation.js";
 
 const command = "adventure";
 
@@ -11,13 +13,16 @@ const command = "adventure";
     });
 
     const toBeRegistered = [
-        winFight,
+        {
+            data: [["found and killed", "found a", "but lost fighting"]],
+            location: "content",
+            process: defaultProcess
+        },
         customizeCooldown("been on an adventure"),
-        loseFight,
         epicJailCommand
     ];
 
-    Process.addCommands(command, toBeRegistered)
+    commandsUser.addCommands(command, toBeRegistered);
 
     Settings.add(command, {
         dTime: 60 * 60 * 1000,

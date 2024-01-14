@@ -1,5 +1,6 @@
 import { stopStory } from "../../system/rule.js"
 import { defaultProcess, processCustom } from "./operation.js"
+import { usernameDash, usernameStar } from "./usersUtils.js"
 
 export const cryCommand = {
     data: ["cried"],
@@ -12,6 +13,7 @@ export function customizeCooldown(regString) {
     return {
         data: ["cooldown", regString],
         location: "authorName=title",
+        user: usernameDash("authorName"),
         process: processCustom({retrieveDTime: true, users: []}),
     }
 }
@@ -19,6 +21,7 @@ export function customizeCooldown(regString) {
 export const epicJailCommand = {
     data: ["is now in the jail"],
     location: "content",
+    user: usernameStar("content"),
     process: stopStory
 }
 
