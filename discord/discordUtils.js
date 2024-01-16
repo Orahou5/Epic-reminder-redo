@@ -18,14 +18,6 @@ export function extendsMessage(msg) {
 
             if(customProps[prop] !== undefined) return customProps[prop];
 
-            if(prop === "finder") return () => finder(Object.assign(customProps, {content: `${target?.content}`}));
-
-            if(prop === "regexResolve") return (stringReg, location) => {
-                const regex = new RegExp(stringReg, "si");
-
-                return regex.test(receiver[location]);
-            };
-
             return getFromProp(prop, receiver);
         }
     }
@@ -41,35 +33,6 @@ function getFromProp(prop, receiver) {
         }, "");
     }
     return undefined;
-}
-
-function finder(locations) {
-    let result = "noUser"
-    const locationsValues = Object.values(locations)
-
-    for (const location of locationsValues) {
-        const splited = location.split(" ");
-
-        if(splited === undefined) continue;
-
-        if(splited.at(1) === "—") return splited.at(0);
-
-        const candidate = splited.find((word) => {
-            const bool1 = word.includes("**") && word === word.toLowerCase();
-            const bool2 = word.includes("<@")
-            return bool1 || bool2;
-        });
-
-        if(candidate === undefined) continue;
-
-        if(candidate.includes("**")) {
-            return candidate.split("**").at(1);
-        } 
-
-        return getIdFromMentionString(candidate);
-    }
-
-    return result;
 }
 
 export function send(channel, content) {

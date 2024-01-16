@@ -4,8 +4,8 @@ import { createPending } from "../system/Pending.js";
 import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { contentStarProcess } from "./commons/default.js";
 import { defaultProcess, processWithMove } from "./commons/operation.js";
+import { contentStarProcess } from "./commons/usersUtils.js";
 
 const commands = {
     id: "hunt",
@@ -27,7 +27,6 @@ CommandHandler.addTrigger("hunt", async(msg) => {
     createPending({
         msg: msg,
         commands: commands, 
-        timeOut: convertToMilliseconds({seconds: 20})
     });
 });
 

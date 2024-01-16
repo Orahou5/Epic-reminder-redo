@@ -20,6 +20,13 @@ export function showDate(...args) {
     console.log(...args, ":", date.toLocaleDateString(undefined, options));
 }
 
+export function transformDurationToString(duration) {
+    return Object.entries(convertFromMilliseconds(duration)).reduce((acc, [key, value]) => {
+        if(value === 0) return acc;
+        return `${acc} ${value} ${key}`;
+    }, "").trim();
+}
+
 
 export function escape(string){
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -68,6 +75,28 @@ export function convertToMilliseconds({
     milliseconds = 0,
 }) {
     return milliseconds + 1000 * (seconds + 60 * (minutes + 60 * (hours + 24 * days)));
+}
+
+export function convertFromMilliseconds(milliseconds) {
+    const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+    milliseconds -= convertToMilliseconds({days});
+
+    const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    milliseconds -= convertToMilliseconds({hours});
+
+    const minutes = Math.floor(milliseconds / (1000 * 60));
+    milliseconds -= convertToMilliseconds({minutes});
+
+    const seconds = Math.floor(milliseconds / (1000));
+    milliseconds -= convertToMilliseconds({seconds});
+
+    return {
+        days,
+        hours,
+        minutes,
+        seconds,
+        milliseconds
+    }
 }
 
 export function bindSomeObject(func, object, continueWithArgs = false) {

@@ -3,6 +3,7 @@ import { Client } from "oceanic.js";
 import "./database/database.js";
 import { closeDatabase, unpauseAllReminders } from "./database/database.js";
 import "./imported.js";
+import { dirLog } from "./scripts/utils.js";
 import { CommandHandler } from "./system/commandHandler.js";
 import { startTimeloop } from "./system/synchronizer.js";
 
@@ -25,7 +26,7 @@ client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
     //console.log("memberRole", msg.member.roles);
-    //dirLog(msg.embeds);
+    // dirLog(msg.embeds);
 
     /*if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

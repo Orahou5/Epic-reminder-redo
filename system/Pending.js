@@ -7,6 +7,9 @@ import { stopStory } from "./rule.js";
 
 export const pendings = {
     add(pending) {
+        if(this?.[pending.user.id]?.[pending.commandId] !== undefined) {
+            this[pending.user.id][pending.commandId].stop();
+        }
         setPath(this, [pending.user.id, pending.commandId], pending);
     },
     remove(pending) {
@@ -37,9 +40,11 @@ class Pending {
         const extendedMsg = extendsMessage(msg);
     
         const match = this.commands.find(c => {
+            // console.log("[", c.location, ":", extendedMsg[c.location], "]");
+            // console.log("commands :", c, "\n")
             return checkData(extendedMsg, c.data, c.location);
         });
-    
+
         if(match === undefined) return false;
     
         if(match.user !== undefined && !checkCommandUser(extendedMsg, match.user, this.user)) return false;
@@ -63,12 +68,12 @@ class Pending {
         });
     }
 
-    stop() {
-        this.collector?.stop();
+    stop(reason = "user") {
+        this.collector?.stop(reason);
     }
 }
 
-const createPendingBase = (stack) => ({msg, user = null, commands, users = [], timeOut = convertToMilliseconds({minutes: 5})}) => {
+const createPendingBase = (stack) => ({msg, user = null, commands, users = [], timeOut = convertToMilliseconds({seconds: 20})}) => {
     const pending = new Pending(user ?? msg.author, msg.channel.id, commands, stack, users, timeOut);
     pending.start(msg);
     return pending;

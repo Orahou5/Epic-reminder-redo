@@ -1,33 +1,32 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
+import { createPending } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { defaultProcess } from "./commons/operation.js";
+import { authorDashProcess } from "./commons/usersUtils.js";
 
-const command = "daily";
-
-{
-    CommandHandler.addTrigger("daily", async(msg) => {
-        createPending(msg.channel.id, msg.author, command);
-    });
-
-    Settings.add(command, {
-        dTime: convertToMilliseconds({days: 1}),
-        fixed_cd: true,
-        emoji: "<:daily:939925508186062848>"
-    });
-
-    const toBeRegistered = [
+const commands = {
+    id: "daily",
+    list: [
         {
-            data: ["usernameDash", "daily"],
-            preverif: "daily",
-            location: "authorName",
-            process: defaultProcess
+            data: ["daily"],
+            ...authorDashProcess("authorName", defaultProcess),
         },
         customizeCooldown("daily rewards"),
         epicJailCommand
-    ];
-
-    Process.addCommands(command, toBeRegistered)
+    ]
 }
+
+CommandHandler.addTrigger("daily", async(msg) => {
+    createPending({
+        msg: msg,
+        commands: commands, 
+    });
+});
+
+Settings.add(commands.id, {
+    dTime: convertToMilliseconds({days: 1}),
+    fixed_cd: true,
+    emoji: "<:daily:939925508186062848>"
+});

@@ -1,4 +1,3 @@
-
 export function usernameStar(location) {
     return ({
         data(user) {
@@ -15,4 +14,33 @@ export function usernameDash(location) {
         },
         location
     });
+}
+
+export function userMention(location) {
+    return ({
+        data(user) {
+            return `${user.mention}`;
+        },
+        location
+    });
+}
+
+function statusTemplate({location, locationUser = null, userFn, process}) {
+    return ({
+        location,
+        user: userFn(locationUser ?? location),
+        process
+    });
+}
+
+export function contentStarProcess(process) {
+    return statusTemplate({location: "content", userFn: usernameStar, process});
+}
+
+export function authorDashProcess(location, process) {
+    return statusTemplate({location, locationUser: "authorName", userFn: usernameDash, process});
+}
+
+export function contentMentionProcess(process) {
+    return statusTemplate({location: "content", userFn: userMention, process});
 }

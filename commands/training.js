@@ -4,9 +4,9 @@ import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { ruleSendTraining } from "../system/rule.js";
 import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { contentStarProcess, createDisplay } from "./commons/default.js";
+import { createDisplay } from "./commons/default.js";
 import { defaultProcess, processCustom, processTrainingPetHelper } from "./commons/operation.js";
-import { usernameStar } from "./commons/usersUtils.js";
+import { contentStarProcess, usernameStar } from "./commons/usersUtils.js";
 
 const commands = {
     id: "training",
@@ -39,7 +39,10 @@ CommandHandler.addMultiplesTriggers(["training", "tr", "ultr", "ultraining"], as
 
     if(["ultr", "ultraining"].includes(args[1].toLowerCase()) && ["p", "progress", "shop", "buy"].includes(args[2]?.toLowerCase())) return;
 
-    createPending({ msg: msg, commands: commands, timeOut: convertToMilliseconds({seconds: 20}) });
+    createPending({ 
+        msg: msg, 
+        commands: commands 
+    });
 });
 
 Settings.add(commands.id, {
