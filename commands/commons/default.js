@@ -2,6 +2,15 @@ import { insertReminder } from "../../database/database.js";
 //import { Settings } from "../../scripts/resolve.js";
 import { showHoursMinutesSeconds } from "../../scripts/utils.js";
 import { Settings } from "../../system/Settings.js";
+import { usernameStar } from "./usersUtils.js";
+
+export function contentStarProcess(process) {
+    return {
+        location: "content",
+        user: usernameStar("content"),
+        process: process
+    }
+}
 
 export function createDisplay(command, emoji, emoji2 = null) {
     return function(user) {
