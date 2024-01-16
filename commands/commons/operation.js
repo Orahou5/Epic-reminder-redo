@@ -26,7 +26,7 @@ function save(argsUp = {}) {
     return function (pending, msg, now = Date.now(), args = {}) {
         stopStory(pending);
 
-        const users = argsUp.users ?? args?.users ?? pending.getUsersConnected();
+        const users = argsUp.users ?? args?.users ?? pending.users;
 
         [pending.user, ...users].forEach((user) => {
             insertReminderRetry({user, msg, now, commandId: pending.commandId, ...args, ...argsUp});

@@ -17,7 +17,7 @@ export function showDate(...args) {
         minute: "numeric",
         second: "numeric"
     }
-    console.log(...args, " : ", date.toLocaleDateString(undefined, options));
+    console.log(...args, ":", date.toLocaleDateString(undefined, options));
 }
 
 

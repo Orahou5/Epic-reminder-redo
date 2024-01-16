@@ -6,7 +6,7 @@ class Button {
         this.style = ButtonStyles.SECONDARY;
         this.customID = "";
         this.label = "";
-        this.emoji = "";
+        this.emoji = undefined;
         this.disabled = true;
     }
 
@@ -78,3 +78,4 @@ const buttonNo = (activated) => new ButtonDanger(activated).setCustomID("no").se
 const buttonYes = (activated) => buttonString("yes", activated);
 
 export { buttonEmoji, buttonNo, buttonString, buttonStringEmoji, buttonYes };
+

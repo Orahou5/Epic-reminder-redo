@@ -1,26 +1,38 @@
+import { processPetHelper } from "../commands/commons/operation.js";
+import { usernameStar } from "../commands/commons/usersUtils.js";
 import { buttonNo, buttonString, buttonStringEmoji, buttonYes } from "../discord/Button.js";
 import { createComponentRow } from "../discord/components.js";
 import { send } from "../discord/discordUtils.js";
 import { convertToMilliseconds } from "../scripts/utils.js";
-import { createPendingUser } from "./Pending.js";
+import { createPending } from "./Pending.js";
 //import { createPending } from "../scripts/pending.js";
 
 export function stopStory(pending) {
     console.log("stoppending")
-    pending.removeFromStack();
+    pending.stop();
 }
 
 export function createPetHelper(pending, msg) {
-    createPendingUser({
+    createPending({
         user: pending.user, 
-        commandId: "pethelper", 
-        channelId: msg.channel.id, 
-        disable_at: convertToMilliseconds({minutes: 1})
+        msg: msg,
+        commands: {
+            id: "pethelper",
+            list: [
+                {
+                    data: ["is approaching"],
+                    location: "field0Name",
+                    user: usernameStar("field0Name"),
+                    process: processPetHelper
+                }
+            ]
+        },
+        timeOut: convertToMilliseconds({minutes: 1})
     });
 }
 
 export function getUsers(pending) {
-    return pending.getUsers() ?? [];
+    return pending.users ?? [];
 }
 
 export function ruleMove(pending, msg) {
