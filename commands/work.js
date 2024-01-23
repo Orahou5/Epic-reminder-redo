@@ -1,10 +1,10 @@
-import { convertToMilliseconds } from "../scripts/utils.js";
+import { customizeCooldown, epicJailCommand } from "../operators/commands.js";
+import { defaultProcess, processWithMove } from "../operators/operation.js";
+import { contentStarProcess } from "../operators/usersUtils.js";
 import { createPending } from "../system/Pending.js";
 import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
-import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess, processWithMove } from "./commons/operation.js";
-import { contentStarProcess } from "./commons/usersUtils.js";
+import { convertToMilliseconds } from "../system/utils.js";
 
 const commands = {
     id: "work",

@@ -2,9 +2,8 @@ import "dotenv/config.js";
 import { Client } from "oceanic.js";
 import "./database/database.js";
 import { closeDatabase, unpauseAllReminders } from "./database/database.js";
-import "./imported.js";
-import { dirLog } from "./scripts/utils.js";
 import { CommandHandler } from "./system/commandHandler.js";
+import "./system/imported.js";
 import { startTimeloop } from "./system/synchronizer.js";
 
 export const client = new Client({ 

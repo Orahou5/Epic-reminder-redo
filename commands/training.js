@@ -1,12 +1,12 @@
-import { convertToMilliseconds } from "../scripts/utils.js";
+import { customizeCooldown, epicJailCommand } from "../operators/commands.js";
+import { createDisplay } from "../operators/default.js";
+import { defaultProcess, processCustom, processTrainingPetHelper } from "../operators/operation.js";
+import { contentStarProcess, usernameStar } from "../operators/usersUtils.js";
 import { createPending } from "../system/Pending.js";
 import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { ruleSendTraining } from "../system/rule.js";
-import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { createDisplay } from "./commons/default.js";
-import { defaultProcess, processCustom, processTrainingPetHelper } from "./commons/operation.js";
-import { contentStarProcess, usernameStar } from "./commons/usersUtils.js";
+import { convertToMilliseconds } from "../system/utils.js";
 
 const commands = {
     id: "training",

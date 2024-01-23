@@ -1,60 +1,64 @@
-import { extractUserAndChannelId, getMultiplesUsersFromMessage } from "../discord/discordUtils.js";
-import { convertToMilliseconds } from "../scripts/utils.js";
-import { commandsUser } from "../system/Commands.js";
-import { createPendingUser } from "../system/Pending.js";
+import { getMultiplesUsersFromMessage } from "../discord/discordUtils.js";
+import { customizeCooldown, epicJailCommand } from "../operators/commands.js";
+import { createDisplay } from "../operators/default.js";
+import { processCustom } from "../operators/operation.js";
+import { authorDashProcess, contentMentionProcess, contentStarProcess } from "../operators/usersUtils.js";
+import { createPending } from "../system/Pending.js";
 import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { stopStory } from "../system/rule.js";
-import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { createDisplay } from "./commons/default.js";
-import { processConnected, processCustom } from "./commons/operation.js";
+import { convertToMilliseconds } from "../system/utils.js";
 
-const command = "horse";
-
-{
-    CommandHandler.addTrigger("horse", async(msg) => {
-        const args = msg.content.toLowerCase().split(" ");
-
-        if(args.at(2) === "race") createPendingUser({...extractUserAndChannelId(msg), commandId: command})
-
-        else if(["breed", "breeding"].includes(args.at(2))){
-            const users = getMultiplesUsersFromMessage({
-                msg,
-                start: 3,
-                max: 1
-            });
-
-            if(users === undefined) return;
-    
-            createPendingUser({...extractUserAndChannelId(msg), commandId: command, users: users})
-        }
-    });
-    
-    Settings.add(command, {
-        dTime: convertToMilliseconds({days: 1}),
-        fixed_cd: true,
-        emoji: ":magnet:",
-    });
-
-    const toBeRegistered = [
+const commands = {
+    id : "horse",
+    list: [
         {
             data: ["horse breeding", "got a tier"],
-            location: "authorName=description",
-            process: processConnected({display: createDisplay("horse breed", ":magnet:")}),
+            ...authorDashProcess( "authorName=description", processCustom({display: createDisplay("horse breed", ":magnet:")})),
         },
         customizeCooldown("this command"),
         {
             data: ["horse race"],
-            location: "content",
-            process: processCustom({display: createDisplay("horse race", ":magnet:")})
+            ...contentStarProcess(processCustom({display: createDisplay("horse race", ":magnet:")}))
         },
         {
             data: [["horse breeding cancelled", "another player to use this command", "tier V or higher", "you are registered already"]],
-            location: "content",
-            process: stopStory
+            ...contentMentionProcess(stopStory)
         },
         epicJailCommand
-    ];
+    ]
+} 
 
-    commandsUser.addCommands(command, toBeRegistered);
-}
+CommandHandler.addTrigger("horse", async(msg) => {
+    const args = msg.content.toLowerCase().split(" ");
+
+    if(args.at(2) === "race") {
+        createPending({
+            msg: msg,
+            commands: commands, 
+        });
+    }
+
+    else if(["breed", "breeding"].includes(args.at(2))){
+        const users = getMultiplesUsersFromMessage({
+            msg,
+            start: 3,
+            max: 1
+        });
+
+        if(users === undefined) return;
+
+        createPending({
+            msg: msg,
+            commands: commands, 
+            users: users,
+            timeOut: convertToMilliseconds({minutes: 18})
+        });
+    }
+});
+    
+Settings.add(commands.id, {
+    dTime: convertToMilliseconds({days: 1}),
+    fixed_cd: true,
+    emoji: ":magnet:",
+});

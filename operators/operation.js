@@ -1,5 +1,5 @@
-import { getCooldownFromMsg } from "../../scripts/utils.js";
-import { createPetHelper, ruleMove, rulePetHelper, stopStory } from "../../system/rule.js";
+import { createPetHelper, ruleMove, rulePetHelper, stopStory } from "../system/rule.js";
+import { getCooldownFromMsg } from "../system/utils.js";
 import { getRoleStartingWith, insertReminderRetry } from "./default.js";
 
 function getMillisecondsUntilNextSaturday() {
@@ -27,9 +27,10 @@ function save(argsUp = {}) {
         stopStory(pending);
 
         const users = argsUp.users ?? args?.users ?? pending.users;
+        const dTime = [args, argsUp].some(props => props?.retrieveDTime === true) ? getCooldownFromMsg(msg, this.location) : args?.dTime;
 
         [pending.user, ...users].forEach((user) => {
-            insertReminderRetry({user, msg, now, commandId: pending.commandId, ...args, ...argsUp});
+            insertReminderRetry({user, msg, now, commandId: pending.commandId, ...args, ...argsUp, ...{dTime}});
         });
     }
 }
@@ -47,10 +48,8 @@ function customizeProcess(steps = []) {
         return function(pending, msg, now = Date.now()) {
             console.log("processing steps", pending.commandId);
 
-            const dTime = args?.retrieveDTime === true ? getCooldownFromMsg(msg, this.location) : args?.dTime;
-    
             steps.forEach((step) => {
-                step(pending, msg, now, {...args, ...{dTime}});
+                step.call(this, pending, msg, now, args);
             });
         }
     }
@@ -66,7 +65,10 @@ export const processPetHelper = customizeProcess([stopStory, rulePetHelper])();
 
 export const processTrainingPetHelper = customizeProcess([createPetHelper, save()])();
 
-export const processConnected = customizeProcess([save()]);
+export function processEvent(eventKey, baseCd = true) {
+    const saver = baseCd ? [save()] : [];
+    return customizeProcess([...saver, save({retrieveDTime: true, commandId: eventKey})])();
+}
 
 export const processGuild = customizeProcess([
     saveGuild(),

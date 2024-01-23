@@ -1,12 +1,12 @@
 import { getMultiplesUsersFromMessage } from "../discord/discordUtils.js";
-import { convertToMilliseconds } from "../scripts/utils.js";
+import { customizeCooldown, epicJailCommand } from "../operators/commands.js";
+import { defaultProcess } from "../operators/operation.js";
+import { authorDashProcess, contentStarProcess } from "../operators/usersUtils.js";
 import { createPending } from "../system/Pending.js";
 import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
 import { stopStory } from "../system/rule.js";
-import { customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/operation.js";
-import { authorDashProcess, contentStarProcess } from "./commons/usersUtils.js";
+import { convertToMilliseconds } from "../system/utils.js";
 
 const commands = {
     id: "duel",

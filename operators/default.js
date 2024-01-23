@@ -1,7 +1,7 @@
-import { insertReminder } from "../../database/database.js";
+import { insertReminder } from "../database/database.js";
 //import { Settings } from "../../scripts/resolve.js";
-import { showHoursMinutesSeconds, transformDurationToString } from "../../scripts/utils.js";
-import { Settings } from "../../system/Settings.js";
+import { Settings } from "../system/Settings.js";
+import { showHoursMinutesSeconds, transformDurationToString } from "../system/utils.js";
 
 export function createDisplay(command, emoji, emoji2 = null) {
     return function(user) {

@@ -1,9 +1,9 @@
 import { MessageCollector } from "oceanic-collectors";
 import { extendsMessage } from "../discord/discordUtils.js";
 import { erpgId } from "../index.js";
-import { convertToMilliseconds, deleteAllEmptyOnDepth, setPath, showDate } from "../scripts/utils.js";
 import { checkCommandUser, checkData } from "./Commands.js";
 import { stopStory } from "./rule.js";
+import { convertToMilliseconds, deleteAllEmptyOnDepth, setPath, showDate } from "./utils.js";
 
 export const pendings = {
     add(pending) {

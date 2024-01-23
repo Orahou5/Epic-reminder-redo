@@ -25,6 +25,15 @@ export function userMention(location) {
     });
 }
 
+export function usernameArena(location) {
+    return ({
+        data(user) {
+            return `**players**: ${user.username}`;
+        },
+        location
+    });
+}
+
 function statusTemplate({location, locationUser = null, userFn, process}) {
     return ({
         location,

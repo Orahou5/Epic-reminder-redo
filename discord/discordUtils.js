@@ -1,3 +1,4 @@
+import { ComponentTypes } from "oceanic.js";
 
 export function extendsMessage(msg) {
     const handler = {
@@ -67,9 +68,9 @@ export function getMultiplesUsersFromMessage({msg, start = 2, min = 1, max = 10}
     return users;
 }
 
-export function extractUserAndChannelId(msg) {
+export function createComponentRow(components) {
     return {
-        user: msg.author,
-        channelId: msg.channel.id
-    }
+        type: ComponentTypes.ACTION_ROW,
+        components
+    };
 }

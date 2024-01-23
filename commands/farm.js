@@ -1,46 +1,41 @@
-import { createPending } from "../scripts/pending.js";
-import { Process, Settings } from "../scripts/process.js";
-import { convertToMilliseconds } from "../scripts/utils.js";
+import { cryCommand, customizeCooldown, epicJailCommand } from "../operators/commands.js";
+import { defaultProcess } from "../operators/operation.js";
+import { contentStarProcess } from "../operators/usersUtils.js";
+import { createPending } from "../system/Pending.js";
+import { Settings } from "../system/Settings.js";
 import { CommandHandler } from "../system/commandHandler.js";
-import { cryCommand, customizeCooldown, epicJailCommand } from "./commons/commands.js";
-import { defaultProcess } from "./commons/process.js";
+import { convertToMilliseconds } from "../system/utils.js";
 
-const command = "farm";
-
-{
-    CommandHandler.addTrigger("farm", async(msg) => {
-        createPending(msg.channel.id, msg.author, command);
-    });
-
-    const toBeRegistered = [
+const commands = {
+    id: "farm",
+    list: [
         {
-            data: ["usernameStar", "plants", "seed"],
-            preverif: "seed",
-            location: "content",
-            process: defaultProcess
+            data: ["plants", "seed"],
+            ...contentStarProcess(defaultProcess)
         },
         customizeCooldown("farmed already"),
         {
-            data: ["usernameStar", "hits the floor with their fists"],
-            preverif: "hits",
-            location: "content",
-            process: defaultProcess
+            data: ["hits the floor with their fists"],
+            ...contentStarProcess(defaultProcess)
         },
         {
-            data: ["usernameStar", "is about to plant another seed"],
-            preverif: "seed",
-            location: "content",
-            process: defaultProcess
+            data: ["is about to plant another seed"],
+            ...contentStarProcess(defaultProcess)
         },
         cryCommand,
         epicJailCommand
-    ];
+    ]
+};
 
-    Process.addCommands(command, toBeRegistered)
-
-    Settings.add(command, {
-        dTime: convertToMilliseconds({minutes: 10}),
-        fixed_cd: true,
-        emoji: ":egg:"
+CommandHandler.addTrigger("farm", async(msg) => {
+    createPending({
+        msg: msg,
+        commands: commands, 
     });
-}
+});
+
+Settings.add(commands.id, {
+    dTime: convertToMilliseconds({minutes: 10}),
+    fixed_cd: true,
+    emoji: ":egg:"
+});

@@ -1,0 +1,14 @@
+import "../commands/adventure.js";
+import "../commands/arena.js";
+import "../commands/daily.js";
+import "../commands/duel.js";
+import "../commands/dungeon.js";
+import "../commands/farm.js";
+import "../commands/horse.js";
+import "../commands/hunt.js";
+import "../commands/lootbox.js";
+import "../commands/quest.js";
+import "../commands/training.js";
+import "../commands/weekly.js";
+import "../commands/work.js";
+import "../commands/guild.js";
