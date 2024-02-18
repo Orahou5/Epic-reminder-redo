@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2-start": "pm2 start index.js --name epic-reminder-redo",
+    "pm2-stop": "pm2 stop epic-reminder-redo",
+    "pm2-restart": "pm2 restart epic-reminder-redo"
   },
   "author": "",
   "license": "ISC",
