@@ -6,6 +6,6 @@ export const Settings = {
     },
 
     get(id) {
-        return this.settings[id];
+        return this.settings[id] ?? {};
     }
 }

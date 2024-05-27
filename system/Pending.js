@@ -40,8 +40,6 @@ class Pending {
         const extendedMsg = extendsMessage(msg);
     
         const match = this.commands.find(c => {
-            // console.log("[", c.location, ":", extendedMsg[c.location], "]");
-            // console.log("commands :", c, "\n")
             return checkData(extendedMsg, c.data, c.location);
         });
 
@@ -83,4 +81,16 @@ export const createPending = createPendingBase(pendings);
 
 export function deleteExpired() {
     pendings.deleteEmpty();
+}
+
+class PendingPet extends Pending {
+    constructor(user, channelId, commands, stack, users = [], timeOut = convertToMilliseconds({seconds: 30}), msg) {
+        super(user, channelId, commands, stack, users, timeOut);
+
+        this.pets = msg.content.split(" ").slice(4);
+    }
+
+    get commandId() {
+        return "pet[" + this.pets.join("|") + "]";
+    }
 }

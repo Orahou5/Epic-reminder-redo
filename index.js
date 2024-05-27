@@ -5,6 +5,7 @@ import { closeDatabase, unpauseAllReminders } from "./database/database.js";
 import { CommandHandler } from "./system/commandHandler.js";
 import "./system/imported.js";
 import { startTimeloop } from "./system/synchronizer.js";
+import { dirLog } from "./system/utils.js";
 
 export const client = new Client({ 
     auth: `Bot ${process.env.DISCORD_TOKEN_ERPG}`,
@@ -25,7 +26,7 @@ client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
     //console.log("memberRole", msg.member.roles);
-    // dirLog(msg.embeds);
+    dirLog(msg);
 
     /*if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);

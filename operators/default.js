@@ -3,9 +3,21 @@ import { insertReminder } from "../database/database.js";
 import { Settings } from "../system/Settings.js";
 import { showHoursMinutesSeconds, transformDurationToString } from "../system/utils.js";
 
+export function createEmojiCommand(command, emoji, emoji2 = null) {
+    return `${emoji}**${command.toUpperCase()}**${emoji2 ?? emoji}`;
+}
+
+export function createBase(command, mode) {
+    const setting = Settings.get(command);
+
+    const { emoji, emoji2 } = setting;
+
+    return `${emoji}**${command.toUpperCase()}${mode !== null ? " " + mode.toUpperCase() : ""}**${emoji2 ?? emoji}`;
+}
+
 export function createDisplay(command, emoji, emoji2 = null) {
     return function(user) {
-        return `${user.mention} It's time for ${emoji}**${command.toUpperCase()}**${emoji2 ?? emoji} *desu*`
+        return `${user.mention} It's time for ${createEmojiCommand(command, emoji, emoji2)} *desu*`
     }
 }
 
