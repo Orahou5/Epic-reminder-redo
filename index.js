@@ -26,12 +26,12 @@ client.on("messageCreate", async(msg) => {
     if(msg.author.bot && msg.author.id !== erpgId) return;
 
     //console.log("memberRole", msg.member.roles);
-    dirLog(msg);
+    //dirLog(msg);
 
-    /*if(msg.author.id === erpgId) {
+    if(msg.author.id === erpgId) {
         const extendedMsg = extendsMessage(msg);
-        resolve(extendedMsg);
-    }*/
+        matchCommand(extendedMsg);
+    }
 
     if(msg.content.startsWith("rpg")) {
         console.log("\n\nstart")
